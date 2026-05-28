@@ -1,0 +1,4892 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    document.documentElement.classList.add("is-restoring-page");
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  </script>
+  <title>小词块 Scroll Hero</title>
+  <meta name="page-version" content="2026-05-12-page03-no-parent-opacity-v3">
+  <style>
+    :root {
+      --deep: #02030b;
+      --ink: #f7fbff;
+      --deck-bg: #10163B;
+      --page02-bg: #10163B;
+      --page02-card: rgba(24, 30, 66, .72);
+      --page02-purple: #b765ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-snap-type: y mandatory;
+    }
+
+    html.is-restoring-page {
+      scroll-behavior: auto !important;
+    }
+
+    html.is-restoring-page body {
+      opacity: 0;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background: var(--deep);
+      overflow-x: hidden;
+    }
+
+    .hero-sequence {
+      position: relative;
+      height: 100vh;
+      min-height: 100vh;
+      background: var(--deep);
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .hero-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--deep);
+    }
+
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: var(--deep);
+      opacity: 1;
+    }
+
+    .clean-bg {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 50% 93%, rgba(42, 193, 255, .7) 0 1px, rgba(42, 193, 255, .28) 2px, rgba(42, 193, 255, 0) 18%),
+        radial-gradient(circle at 50% 46%, rgba(18, 100, 185, .84) 0 16%, rgba(8, 41, 91, .56) 36%, rgba(2, 8, 24, .96) 70%),
+        linear-gradient(180deg, #06152e 0%, #04102a 44%, #01040d 100%);
+      pointer-events: none;
+    }
+
+    .clean-bg::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: .9;
+      background-image:
+        radial-gradient(circle at 12% 22%, rgba(255, 255, 255, .72) 0 1px, transparent 2px),
+        radial-gradient(circle at 26% 64%, rgba(87, 190, 255, .6) 0 1px, transparent 2px),
+        radial-gradient(circle at 48% 18%, rgba(255, 255, 255, .52) 0 1px, transparent 2px),
+        radial-gradient(circle at 62% 38%, rgba(87, 190, 255, .48) 0 1px, transparent 2px),
+        radial-gradient(circle at 83% 26%, rgba(255, 255, 255, .62) 0 1px, transparent 2px),
+        radial-gradient(circle at 74% 72%, rgba(87, 190, 255, .42) 0 1px, transparent 2px),
+        radial-gradient(circle at 38% 82%, rgba(255, 255, 255, .46) 0 1px, transparent 2px);
+      background-size: 180px 180px, 240px 240px, 210px 210px, 270px 270px, 190px 190px, 230px 230px, 260px 260px;
+      filter: drop-shadow(0 0 8px rgba(70, 174, 255, .58));
+    }
+
+    .video-dim {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0) 0 28%, rgba(0, 0, 0, .16) 58%, rgba(0, 0, 0, .68) 100%),
+        linear-gradient(180deg, rgba(2, 3, 11, .08), rgba(2, 3, 11, .35));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .final-logo {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 4;
+      width: min(760px, 76vw);
+      height: auto;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.94);
+      filter: drop-shadow(0 28px 72px rgba(0, 0, 0, .42));
+      pointer-events: none;
+    }
+
+    .deck-page {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 96px 24px;
+      color: #111827;
+      background: #f6fbff;
+      text-align: center;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .deck-page > div {
+      opacity: .18;
+      transform: translateY(36px) scale(.98);
+      transition: opacity 700ms ease, transform 900ms cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .deck-page.is-active > div {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .deck-page h2 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 88px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .deck-page p {
+      max-width: 680px;
+      margin: 22px auto 0;
+      color: #526274;
+      font-size: clamp(17px, 2vw, 25px);
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .pain-page {
+      min-height: 100vh;
+      padding: clamp(56px, 8vh, 96px) clamp(28px, 6vw, 130px) clamp(48px, 7vh, 72px);
+      color: #fff;
+      background:
+        radial-gradient(circle at 50% 12%, rgba(88, 102, 190, .16), transparent 34%),
+        linear-gradient(180deg, var(--deck-bg) 0%, var(--deck-bg) 100%);
+      overflow: hidden;
+    }
+
+    .pain-inner {
+      width: min(1660px, 100%);
+      margin: 0 auto;
+    }
+
+    .pain-title {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 2400ms ease, transform 5000ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .pain-title h2 {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(42px, 4.45vw, 78px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .pain-title p {
+      width: max-content;
+      margin: 18px auto 0;
+      color: var(--page02-purple);
+      font-size: clamp(23px, 1.95vw, 34px);
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .pain-cards {
+      margin-top: clamp(48px, 7vh, 76px);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(28px, 2.8vw, 42px);
+    }
+
+    .pain-card {
+      position: relative;
+      min-height: clamp(520px, 62vh, 732px);
+      overflow: hidden;
+      border-radius: clamp(48px, 3.7vw, 72px);
+      background: var(--page02-card);
+      box-shadow: 0 34px 72px rgba(0, 0, 0, .2);
+      opacity: 0;
+      transform: translateY(74px) scale(.965);
+      transition:
+        opacity 2600ms ease,
+        transform 5000ms cubic-bezier(.16, 1, .3, 1),
+        box-shadow 5000ms ease;
+    }
+
+    .pain-card:nth-child(2) {
+      transition-delay: 420ms;
+    }
+
+    .pain-card:nth-child(3) {
+      transition-delay: 840ms;
+    }
+
+    .pain-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.06);
+      transition: transform 5000ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .pain-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(19, 25, 59, .14), rgba(19, 25, 59, .28) 38%, rgba(18, 22, 54, .58) 100%),
+        rgba(40, 47, 96, .28);
+      pointer-events: none;
+    }
+
+    .pain-copy {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 50%;
+      z-index: 1;
+      transform: translateY(-50%);
+      text-align: center;
+      text-shadow: 0 12px 34px rgba(0, 0, 0, .35);
+    }
+
+    .pain-copy h3 {
+      margin: 0;
+      color: var(--page02-purple);
+      font-size: clamp(32px, 2.84vw, 51px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .pain-copy p {
+      margin: 22px 0 0;
+      color: #fff;
+      font-size: clamp(18px, 1.44vw, 26px);
+      line-height: 1.28;
+      font-weight: 800;
+    }
+
+    .pain-page.is-active .pain-title,
+    .pain-page.is-active .pain-card {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .pain-page.is-active .pain-card {
+      box-shadow: 0 44px 86px rgba(0, 0, 0, .26);
+    }
+
+    .pain-page.is-active .pain-card img {
+      transform: scale(1);
+    }
+
+    .micro-page {
+      height: 100vh;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--deck-bg);
+      overflow: hidden;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    .micro-stage {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      max-width: none;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--deck-bg);
+    }
+
+    .deck-page.micro-page > .micro-stage {
+      opacity: 1;
+      transform: none;
+    }
+
+    .micro-stage .micro-lines {
+      display: grid;
+      gap: clamp(70px, 7.2vh, 92px);
+      text-align: center;
+      opacity: 1;
+      transform: translateY(-8vh);
+      transition: opacity 260ms ease, filter 260ms ease;
+      z-index: 4;
+    }
+
+    .micro-page .micro-line {
+      margin: 0;
+      color: #fff;
+      max-width: none;
+      font-size: clamp(42px, 4.45vw, 78px);
+      line-height: 1.08;
+      font-weight: 900;
+      letter-spacing: 0;
+      opacity: 0;
+      transform: translateY(42px);
+      transition: opacity 1100ms ease, transform 1400ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .micro-page .micro-line:nth-child(2) {
+      transition-delay: 520ms;
+    }
+
+    .micro-page .micro-line:nth-child(3) {
+      transition-delay: 1040ms;
+    }
+
+    .micro-page .micro-line .accent {
+      color: #bf63ff;
+    }
+
+    .micro-page.is-active .micro-line {
+      opacity: 1;
+      transform: translateY(1px);
+    }
+
+    .micro-page.words-active .micro-lines {
+      opacity: .12;
+      filter: saturate(.8);
+    }
+
+    .micro-page.center-words .micro-lines,
+    .micro-page.phrase-active .micro-lines {
+      opacity: 0;
+    }
+
+    .word-cloud {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 3200ms ease 420ms;
+    }
+
+    .micro-page.words-active .word-cloud {
+      opacity: 1;
+    }
+
+    .float-word {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      color: #fff;
+      font-size: clamp(34px, 3.35vw, 64px);
+      line-height: 1;
+      font-weight: 400;
+      letter-spacing: 0;
+      white-space: nowrap;
+      opacity: .98;
+      transform: translateY(-50%);
+      animation: wordFloat var(--dur) ease-in-out infinite alternate;
+      animation-delay: var(--delay);
+      transition:
+        left 2000ms cubic-bezier(.16, 1, .3, 1),
+        top 2000ms cubic-bezier(.16, 1, .3, 1),
+        color 1100ms ease,
+        opacity 2000ms ease,
+        transform 2000ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .micro-page.target-words .extra-word {
+      opacity: 0;
+    }
+
+    .micro-page.green-words .float-word {
+      color: #00DF32;
+    }
+
+    .micro-page.center-words .primary-word {
+      left: var(--cx);
+      top: var(--cy);
+      opacity: 1;
+      animation: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .micro-page.phrase-hiding .word-cloud,
+    .micro-page.phrase-active .word-cloud {
+      opacity: 0;
+      transition: opacity 2000ms ease;
+    }
+
+    .phrase-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(0);
+      transition: opacity 1600ms ease, transform 1600ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .micro-page.phrase-active .phrase-layer {
+      opacity: 1;
+    }
+
+    .micro-page.phrase-next-active .phrase-layer {
+      opacity: 0;
+      transform: translateX(-110vw);
+    }
+
+    .phrase-layer-next {
+      position: fixed;
+      inset: 0;
+      z-index: 6;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(0);
+      transition: opacity 1600ms ease;
+    }
+
+    .micro-page.phrase-next-visible .phrase-layer-next {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .phrase-lines {
+      display: grid;
+      gap: clamp(42px, 5.6vh, 68px);
+      text-align: center;
+      font-family: Arial, "PingFang SC", sans-serif;
+      font-size: clamp(34px, 3.25vw, 62px);
+      line-height: 1.12;
+      font-weight: 400;
+      letter-spacing: 0;
+      white-space: nowrap;
+      transform: translateY(-2vh);
+    }
+
+    .phrase-line {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 1000ms ease, transform 1200ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .phrase-active .phrase-line {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .phrase-active .phrase-line:nth-child(2) {
+      transition-delay: 260ms;
+    }
+
+    .phrase-active .phrase-line:nth-child(3) {
+      transition-delay: 520ms;
+    }
+
+    .phrase-active .phrase-line:nth-child(4) {
+      transition-delay: 780ms;
+    }
+
+    .phrase-key {
+      color: #00DF32;
+    }
+
+    .phrase-cn {
+      margin-top: clamp(16px, 1.9vh, 24px);
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-size: clamp(30px, 2.85vw, 54px);
+      line-height: 1.12;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1100ms ease 500ms, transform 1200ms cubic-bezier(.16, 1, .3, 1) 500ms;
+    }
+
+    .phrase-active .phrase-cn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .phrase-cn-key {
+      color: #00DF32;
+    }
+
+    .next-lines {
+      display: grid;
+      gap: clamp(42px, 5.6vh, 68px);
+      text-align: center;
+      font-family: Arial, "PingFang SC", sans-serif;
+      font-size: clamp(34px, 3.25vw, 62px);
+      line-height: 1.12;
+      font-weight: 400;
+      letter-spacing: 0;
+      white-space: nowrap;
+      transform: translateY(-2vh);
+    }
+
+    .next-cn {
+      margin-top: clamp(16px, 1.9vh, 24px);
+      font-family: "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      font-size: clamp(30px, 2.85vw, 54px);
+      line-height: 1.12;
+      font-weight: 500;
+      letter-spacing: 0;
+      color: #fff;
+    }
+
+    .ai-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #10163B;
+      color: #fff;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      isolation: isolate;
+    }
+
+    .ai-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 71% 45%, rgba(20, 151, 255, .16), transparent 34%),
+        radial-gradient(circle at 18% 20%, rgba(120, 75, 255, .12), transparent 30%),
+        linear-gradient(90deg, #10163B 0%, #10163B 46%, rgba(16, 22, 59, .82) 63%, rgba(16, 22, 59, .35) 100%);
+      pointer-events: none;
+    }
+
+    .ai-page::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      z-index: 4;
+      opacity: 0;
+      background:
+        radial-gradient(circle at 68% 18%, rgba(255, 255, 255, .48) 0 1px, transparent 2px),
+        radial-gradient(circle at 83% 18%, rgba(255, 139, 77, .9) 0 2px, rgba(255, 139, 77, .24) 4px, transparent 9px),
+        radial-gradient(circle at 88% 30%, rgba(255, 164, 93, .86) 0 3px, rgba(255, 164, 93, .24) 6px, transparent 13px),
+        radial-gradient(circle at 75% 47%, rgba(255, 139, 77, .72) 0 2px, rgba(255, 139, 77, .18) 5px, transparent 12px),
+        radial-gradient(circle at 91% 58%, rgba(255, 139, 77, .8) 0 2px, rgba(255, 139, 77, .22) 5px, transparent 12px),
+        radial-gradient(circle at 64% 68%, rgba(75, 202, 255, .44) 0 1px, transparent 3px);
+      background-size: 180px 180px, 260px 260px, 310px 310px, 230px 230px, 280px 280px, 210px 210px;
+      mix-blend-mode: screen;
+      animation: aiTwinkle 2.8s steps(2, end) infinite;
+      pointer-events: none;
+    }
+
+    .ai-page.is-active::after {
+      opacity: .85;
+      transition: opacity 2800ms ease 500ms;
+    }
+
+    .ai-visual {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      opacity: 0;
+      transform: translateX(48px) scale(1.015);
+      transition: opacity 2800ms ease, transform 3200ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-visual img {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: min(54vw, 880px);
+      height: 100vh;
+      object-fit: cover;
+      object-position: 47% center;
+      opacity: 1;
+      transform: translateY(-50%) scale(1.02);
+      mix-blend-mode: screen;
+      filter: saturate(1.28) brightness(1.22) contrast(1.1);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .08) 5%, rgba(0, 0, 0, .85) 19%, #000 45%, #000 100%);
+      mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .08) 5%, rgba(0, 0, 0, .85) 19%, #000 45%, #000 100%);
+      animation: aiImagePulse 6.8s ease-in-out infinite;
+    }
+
+    .ai-page.is-active .ai-visual {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+
+    .ai-visual::after {
+      content: none;
+    }
+
+    .ai-brain {
+      position: absolute;
+      left: 86%;
+      top: 20%;
+      z-index: 30;
+      width: min(22vw, 430px);
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1);
+      mix-blend-mode: normal;
+      filter: saturate(1.18) brightness(1.02) contrast(1.04) drop-shadow(0 0 24px rgba(93, 221, 255, .28));
+      pointer-events: none;
+      transition:
+        opacity 360ms ease,
+        left 2400ms cubic-bezier(.16, 1, .3, 1),
+        top 2400ms cubic-bezier(.16, 1, .3, 1),
+        width 2400ms cubic-bezier(.16, 1, .3, 1),
+        transform 2400ms cubic-bezier(.16, 1, .3, 1),
+        filter 2400ms ease;
+    }
+
+    .ai-brain img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transform-origin: center;
+    }
+
+    .ai-brain::after {
+      content: "";
+      position: absolute;
+      inset: -18%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77, 217, 255, .22), rgba(190, 93, 255, .13) 38%, transparent 72%);
+      mix-blend-mode: screen;
+      opacity: .8;
+      z-index: -1;
+      animation: brainGlow 3.2s ease-in-out infinite;
+    }
+
+    .ai-content {
+      position: relative;
+      z-index: 5;
+      min-height: 100vh;
+      display: grid;
+      align-content: center;
+      width: min(1400px, calc(100% - 96px));
+      margin: 0 auto;
+      padding-left: clamp(84px, 8.4vw, 150px);
+      transform: translate(-50px, -1.5vh);
+    }
+
+    .ai-kicker {
+      margin: 0 0 30px;
+      color: #bf63ff;
+      font-size: 28.8pt;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .ai-title {
+      max-width: 760px;
+      margin: 0;
+      color: #fff;
+      font-size: 72pt;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .ai-copy {
+      max-width: 650px;
+      margin: 48px 0 0;
+      color: rgba(255, 255, 255, .92);
+      font-size: 21.6pt;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .ai-kicker,
+    .ai-title,
+    .ai-copy {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(48px);
+      transition:
+        opacity 1000ms ease,
+        filter 1200ms ease,
+        transform 1400ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-kicker {
+      transition-delay: 760ms;
+    }
+
+    .ai-title {
+      transition-delay: 940ms;
+    }
+
+    .ai-copy {
+      transition-delay: 1180ms;
+    }
+
+    .ai-page.is-active .ai-kicker,
+    .ai-page.is-active .ai-title,
+    .ai-page.is-active .ai-copy {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+
+    .ai-page.brain-active::after {
+      opacity: .24;
+      transition: opacity 700ms ease;
+    }
+
+    .ai-page.brain-active:not(.brain-centered) .ai-visual {
+      opacity: .38;
+      transition: opacity 700ms ease, transform 900ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-page.brain-active:not(.brain-centered) .ai-kicker,
+    .ai-page.brain-active:not(.brain-centered) .ai-title,
+    .ai-page.brain-active:not(.brain-centered) .ai-copy {
+      opacity: .32;
+      filter: blur(0);
+      transform: translateY(0);
+      transition: opacity 700ms ease;
+      transition-delay: 0ms;
+    }
+
+    .ai-page.brain-centered::after {
+      opacity: 0;
+      animation: none;
+      transition: opacity 900ms ease;
+    }
+
+    .ai-page.brain-centered .ai-visual {
+      opacity: 0;
+      transform: translateX(24px) scale(1.01);
+      transition: opacity 1200ms ease, transform 1400ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-page.brain-centered .ai-kicker,
+    .ai-page.brain-centered .ai-title,
+    .ai-page.brain-centered .ai-copy {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(-18px);
+      transition: opacity 1000ms ease, filter 1000ms ease, transform 1200ms cubic-bezier(.16, 1, .3, 1);
+      transition-delay: 0ms;
+    }
+
+    .ai-page.brain-active .ai-brain {
+      opacity: 1;
+    }
+
+    .ai-page.brain-active:not(.brain-centered) .ai-brain img {
+      animation: brainBlink 3000ms ease-in-out 1 both;
+    }
+
+    .ai-page.brain-centered .ai-brain {
+      left: 50%;
+      top: 50%;
+      width: min(34vw, 560px);
+      transform: translate(-50%, -50%) scale(1);
+      filter: saturate(1.36) brightness(1.14) contrast(1.1) drop-shadow(0 0 48px rgba(93, 221, 255, .42));
+    }
+
+    .ai-page.brain-centered .ai-brain::after {
+      opacity: 0;
+      animation: none;
+    }
+
+    .ai-network {
+      position: absolute;
+      inset: 0;
+      z-index: 18;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 700ms ease;
+    }
+
+    .ai-page.brain-centered .ai-network {
+      opacity: 1;
+    }
+
+    .ai-links {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .ai-link {
+      fill: none;
+      stroke: rgba(255, 245, 255, .65);
+      stroke-width: 3px;
+      stroke-linecap: round;
+      stroke-dasharray: var(--path-length, 1000px) var(--path-length, 1000px);
+      stroke-dashoffset: var(--path-length, 1000px);
+      vector-effect: non-scaling-stroke;
+      filter: none;
+      opacity: 0;
+      transition:
+        opacity 220ms ease,
+        stroke-dashoffset 1200ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-beam-glow,
+    .ai-beam-core {
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: var(--path-length, 1000px) var(--path-length, 1000px);
+      stroke-dashoffset: var(--path-length, 1000px);
+      vector-effect: non-scaling-stroke;
+      opacity: 0;
+      transition:
+        opacity 220ms ease,
+        stroke-dashoffset 1200ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .ai-beam-glow {
+      stroke: url(#aiGlowGradient);
+      stroke-width: 8px;
+      filter: blur(6px);
+    }
+
+    .ai-beam-core {
+      stroke: url(#aiBeamCore);
+      stroke-width: 4.5px;
+      filter: none;
+    }
+
+    .ai-link-dot {
+      position: absolute;
+      z-index: 30;
+      width: 22px;
+      height: 22px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      opacity: 0;
+      background:
+        radial-gradient(circle, #fff 0 10%, #dffbff 11% 24%, #64dcff 25% 46%, rgba(70, 199, 255, .36) 47% 68%, transparent 69%);
+      box-shadow:
+        0 0 5px rgba(255, 255, 255, 1),
+        0 0 10px rgba(104, 221, 255, .98),
+        0 0 24px rgba(61, 188, 255, .68),
+        0 0 44px rgba(57, 151, 255, .38),
+        0 0 74px rgba(34, 129, 255, .22);
+      transform: translate(-50%, -50%) scale(.92);
+      transition: opacity 500ms ease 700ms;
+    }
+
+    .dot-tl {
+      left: 21.85%;
+      top: 32.25%;
+    }
+
+    .dot-tr {
+      left: 74.6%;
+      top: 33.25%;
+    }
+
+    .dot-bl {
+      left: 21.85%;
+      top: 65.75%;
+    }
+
+    .dot-br {
+      left: 74.6%;
+      top: 72.2%;
+    }
+
+    .ai-page.line-stage-1 .ai-link-tl,
+    .ai-page.line-stage-2 .ai-link-tl,
+    .ai-page.line-stage-3 .ai-link-tl,
+    .ai-page.line-stage-4 .ai-link-tl,
+    .ai-page.line-stage-2 .ai-link-tr,
+    .ai-page.line-stage-3 .ai-link-tr,
+    .ai-page.line-stage-4 .ai-link-tr,
+    .ai-page.line-stage-3 .ai-link-bl,
+    .ai-page.line-stage-4 .ai-link-bl,
+    .ai-page.line-stage-4 .ai-link-br {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+
+    .ai-page.line-stage-1 .beam-tl,
+    .ai-page.line-stage-2 .beam-tl,
+    .ai-page.line-stage-3 .beam-tl,
+    .ai-page.line-stage-4 .beam-tl,
+    .ai-page.line-stage-2 .beam-tr,
+    .ai-page.line-stage-3 .beam-tr,
+    .ai-page.line-stage-4 .beam-tr,
+    .ai-page.line-stage-3 .beam-bl,
+    .ai-page.line-stage-4 .beam-bl,
+    .ai-page.line-stage-4 .beam-br {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+
+    .ai-page.line-stage-1 .dot-tl,
+    .ai-page.line-stage-2 .dot-tl,
+    .ai-page.line-stage-3 .dot-tl,
+    .ai-page.line-stage-4 .dot-tl,
+    .ai-page.line-stage-2 .dot-tr,
+    .ai-page.line-stage-3 .dot-tr,
+    .ai-page.line-stage-4 .dot-tr,
+    .ai-page.line-stage-3 .dot-bl,
+    .ai-page.line-stage-4 .dot-bl,
+    .ai-page.line-stage-4 .dot-br {
+      opacity: 1;
+    }
+
+    .benefit {
+      position: absolute;
+      width: min(20vw, 300px);
+      opacity: 0;
+      transform: translateY(22px) scale(.94);
+      transition:
+        opacity 720ms ease,
+        transform 900ms cubic-bezier(.16, 1, .3, 1),
+        filter 900ms ease;
+      filter: blur(10px);
+    }
+
+    .benefit-tl {
+      left: 6.5%;
+      top: 9%;
+    }
+
+    .benefit-tr {
+      right: 7%;
+      top: 9%;
+    }
+
+    .benefit-bl {
+      left: 6.5%;
+      bottom: 7%;
+    }
+
+    .benefit-br {
+      right: 7%;
+      bottom: 7%;
+    }
+
+    .benefit-head {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 18px;
+    }
+
+    .benefit-bl .benefit-head,
+    .benefit-br .benefit-head {
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+
+    .benefit-head > div:last-child {
+      min-width: 0;
+      text-align: left;
+      justify-self: start;
+    }
+
+    .benefit-icon {
+      width: 64px;
+      height: 64px;
+      margin-top: calc((clamp(28px, 2.5vw, 42px) - 64px) / 2);
+      border: 1.5px solid rgba(91, 204, 255, .82);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #74d7ff;
+      background: radial-gradient(circle, rgba(52, 174, 255, .16), rgba(18, 31, 77, .48));
+      box-shadow: 0 0 20px rgba(74, 199, 255, .32), inset 0 0 18px rgba(74, 199, 255, .16);
+    }
+
+    .benefit-icon svg {
+      width: 34px;
+      height: 34px;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .benefit h3 {
+      margin: 0;
+      color: #69d4ff;
+      font-size: clamp(28px, 2.5vw, 42px);
+      line-height: 1;
+      font-weight: 800;
+      text-align: left;
+      text-shadow: 0 0 14px rgba(88, 211, 255, .42);
+    }
+
+    .benefit p {
+      margin: 10px 0 0;
+      color: rgba(255, 255, 255, .74);
+      font-size: clamp(16px, 1.35vw, 23px);
+      line-height: 1.42;
+      font-weight: 500;
+      text-align: left;
+    }
+
+    .benefit-visual {
+      width: min(18vw, 270px);
+      height: min(18vw, 270px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 2pt solid rgba(91, 204, 255, .5);
+      box-shadow: 0 0 28px rgba(74, 199, 255, .18), inset 0 0 32px rgba(74, 199, 255, .12);
+      overflow: hidden;
+      position: relative;
+      background: rgba(19, 33, 82, .52);
+    }
+
+    .visual-scene {
+      background:
+        linear-gradient(rgba(13, 24, 64, .06), rgba(13, 24, 64, .18)),
+        url("assets/page-04/benefit-landscape.png") center / cover no-repeat;
+      filter: saturate(1.08) brightness(.98) contrast(1.04);
+    }
+
+    .visual-logic {
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 48%, rgba(72, 190, 255, .18), rgba(14, 24, 62, .86));
+    }
+
+    .logic-stack {
+      position: relative;
+      width: 78%;
+      height: 72%;
+      color: #7bdcff;
+      font-size: clamp(9px, .78vw, 13px);
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .logic-stack span {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      min-width: 42%;
+      min-height: 20%;
+      padding: 5px 8px;
+      border: 1px solid rgba(110, 214, 255, .68);
+      border-radius: 6px;
+      background: linear-gradient(180deg, rgba(42, 73, 139, .74), rgba(20, 35, 83, .66));
+      box-shadow: 0 0 14px rgba(78, 201, 255, .22), inset 0 0 12px rgba(90, 203, 255, .12);
+      line-height: 1.25;
+      white-space: pre-line;
+    }
+
+    .logic-stack svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .logic-arrow,
+    .logic-dash {
+      fill: none;
+      stroke: rgba(103, 211, 255, .72);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 6px rgba(79, 203, 255, .46));
+    }
+
+    .logic-dash {
+      stroke-dasharray: 4 5;
+    }
+
+    .logic-situation {
+      left: 11%;
+      top: 4%;
+    }
+
+    .logic-action {
+      left: 11%;
+      top: 39%;
+    }
+
+    .logic-result {
+      left: 11%;
+      bottom: 4%;
+    }
+
+    .logic-reason {
+      right: 0;
+      top: 47%;
+      min-width: 34%;
+    }
+
+    .visual-place {
+      background:
+        linear-gradient(rgba(10, 18, 52, .03), rgba(10, 18, 52, .18)),
+        url("assets/page-04/benefit-people.png") center / cover no-repeat;
+      filter: saturate(1.06) brightness(.95) contrast(1.05);
+    }
+
+    .visual-place::after {
+      content: none;
+    }
+
+    .visual-use {
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 50%, rgba(44, 140, 255, .16), rgba(12, 20, 55, .9));
+    }
+
+    .chat-stack {
+      display: grid;
+      gap: 12px;
+      width: 74%;
+      color: rgba(255, 255, 255, .9);
+      font-size: clamp(10px, .9vw, 15px);
+      line-height: 1.25;
+    }
+
+    .chat-stack span {
+      padding: 9px 12px;
+      border: 1px solid rgba(103, 196, 255, .48);
+      border-radius: 10px;
+      background: rgba(31, 54, 111, .72);
+      box-shadow: 0 0 14px rgba(74, 199, 255, .13);
+    }
+
+    @media (max-width: 2200px), (max-height: 1200px) {
+      .ai-page.brain-centered .ai-brain {
+        width: min(40vw, 430px);
+      }
+
+      .benefit {
+        width: min(18vw, 230px);
+      }
+
+      .benefit-tl {
+        left: 4.8%;
+        top: 5.5%;
+      }
+
+      .benefit-tr {
+        right: 5.2%;
+        top: 5.5%;
+      }
+
+      .benefit-bl {
+        left: 4.8%;
+        bottom: 4.6%;
+      }
+
+      .benefit-br {
+        right: 5.2%;
+        bottom: 4.6%;
+      }
+
+      .benefit-head {
+        grid-template-columns: 52px 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .benefit-bl .benefit-head,
+      .benefit-br .benefit-head {
+        margin-top: 14px;
+      }
+
+      .benefit-icon {
+        width: 52px;
+        height: 52px;
+        margin-top: calc((clamp(24px, 2.2vw, 34px) - 52px) / 2);
+      }
+
+      .benefit-icon svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      .benefit h3 {
+        font-size: clamp(24px, 2.2vw, 34px);
+      }
+
+      .benefit p {
+        margin-top: 8px;
+        font-size: clamp(14px, 1.18vw, 18px);
+      }
+
+      .benefit-visual {
+        width: min(15.2vw, 192px);
+        height: min(15.2vw, 192px);
+      }
+    }
+
+    .ai-page.benefit-stage-1 .benefit-tl,
+    .ai-page.benefit-stage-2 .benefit-tl,
+    .ai-page.benefit-stage-3 .benefit-tl,
+    .ai-page.benefit-stage-4 .benefit-tl,
+    .ai-page.benefit-stage-5 .benefit-tl,
+    .ai-page.benefit-stage-2 .benefit-tr,
+    .ai-page.benefit-stage-3 .benefit-tr,
+    .ai-page.benefit-stage-4 .benefit-tr,
+    .ai-page.benefit-stage-5 .benefit-tr,
+    .ai-page.benefit-stage-3 .benefit-bl,
+    .ai-page.benefit-stage-4 .benefit-bl,
+    .ai-page.benefit-stage-5 .benefit-bl,
+    .ai-page.benefit-stage-4 .benefit-br,
+    .ai-page.benefit-stage-5 .benefit-br {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .product-page {
+      --product-devices-bottom: clamp(116px, calc(7vh + 40px), 134px);
+      --product-devices-width: min(76vw, 1240px);
+      --product-devices-height: min(35.72vw, 583px);
+      --device-click-left: 37%;
+      --device-click-top: 42%;
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #10163B;
+      color: #fff;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      isolation: isolate;
+    }
+
+    .product-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 50% 77%, rgba(48, 66, 138, .54) 0 9%, rgba(31, 43, 98, .22) 23%, transparent 49%),
+        linear-gradient(180deg, #10163B 0%, #10163B 100%);
+      opacity: .9;
+      pointer-events: none;
+    }
+
+    .product-copy {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      padding-top: clamp(112px, 13.6vh, 150px);
+      text-align: center;
+    }
+
+    .product-title,
+    .product-kicker {
+      margin: 0;
+      opacity: 0;
+      transform: translateY(42px);
+      transition:
+        opacity 1100ms ease,
+        transform 1500ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .product-title {
+      color: #fff;
+      font-size: clamp(50px, 5vw, 78px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .product-kicker {
+      margin-top: 24px;
+      color: #bf63ff;
+      font-size: clamp(24px, 1.95vw, 33px);
+      line-height: 1.1;
+      font-weight: 800;
+      transition-delay: 180ms;
+    }
+
+    .product-page.is-active .product-title,
+    .product-page.is-active .product-kicker {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .product-book-stage {
+      position: absolute;
+      left: 50%;
+      bottom: clamp(106px, calc(8.2vh + 20px), 132px);
+      z-index: 2;
+      width: min(72.8vw, 1398px);
+      aspect-ratio: 1580 / 670;
+      opacity: 0;
+      transform: translate3d(-50%, 54px, 0) scale(.965);
+      transform-origin: center bottom;
+      transition:
+        opacity 1200ms ease 350ms,
+        transform 1800ms cubic-bezier(.16, 1, .3, 1) 350ms;
+    }
+
+    .product-page.is-active .product-book-stage {
+      opacity: 1;
+      transform: translate3d(-50%, 0, 0) scale(1);
+    }
+
+    .product-devices {
+      position: absolute;
+      left: 50%;
+      bottom: var(--product-devices-bottom);
+      z-index: 2;
+      width: var(--product-devices-width);
+      height: auto;
+      opacity: 0;
+      transform: translate3d(-50%, 38px, 0) scale(.985);
+      transform-origin: center bottom;
+      filter: drop-shadow(0 34px 46px rgba(0, 0, 0, .24));
+      transition:
+        opacity 1300ms ease 1280ms,
+        transform 1700ms cubic-bezier(.16, 1, .3, 1) 1280ms;
+    }
+
+    .product-page.devices-active .product-devices {
+      opacity: 1;
+      transform: translate3d(-50%, 0, 0) scale(1);
+      animation: productDevicesOut 7600ms linear 0ms both;
+    }
+
+    .device-click-target {
+      position: absolute;
+      left: var(--device-click-x, 50%);
+      top: var(--device-click-y, 50%);
+      z-index: 7;
+      width: clamp(22px, 1.8vw, 34px);
+      height: clamp(22px, 1.8vw, 34px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .device-focus,
+    .device-detail {
+      position: absolute;
+      left: 50%;
+      top: calc(100vh - var(--product-devices-bottom) - var(--product-devices-height) - 90px);
+      z-index: 4;
+      width: min(78vw, 1449px);
+      height: auto;
+      box-sizing: border-box;
+      border: 10px solid #000;
+      border-radius: 1px;
+      opacity: 0;
+      transform: translate3d(-50%, 32px, 0) scale(.72);
+      transform-origin: center center;
+      filter:
+        drop-shadow(0 -12px 126px rgba(93, 94, 221, .88))
+        drop-shadow(0 34px 48px rgba(0, 0, 0, .24));
+      pointer-events: none;
+      will-change: opacity, transform;
+    }
+
+    .device-mode-hitbox {
+      position: absolute;
+      left: 50%;
+      top: calc(100vh - var(--product-devices-bottom) - var(--product-devices-height) - 90px);
+      z-index: 10;
+      width: min(78vw, 1449px);
+      aspect-ratio: 3662 / 2176;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+
+    .product-page.devices-active .device-mode-hitbox {
+      pointer-events: auto;
+      animation: deviceModeHitboxIn 5600ms linear 5100ms both;
+    }
+
+    .device-mode-button {
+      position: absolute;
+      top: 1.8%;
+      width: 4.2%;
+      height: 5.4%;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: transparent;
+      cursor: pointer;
+      appearance: none;
+    }
+
+    .device-mode-button[data-mode="guess"] { left: 39.2%; }
+    .device-mode-button[data-mode="select"] { left: 43.6%; }
+    .device-mode-button[data-mode="order"] { left: 48%; }
+    .device-mode-button[data-mode="speak"] { left: 52.5%; }
+    .device-mode-button[data-mode="write"] { left: 56.8%; }
+
+    .device-detail {
+      opacity: 0;
+    }
+
+    .device-cursor {
+      position: absolute;
+      left: 96%;
+      top: 42%;
+      z-index: 8;
+      width: clamp(46px, 4.7vw, 84px);
+      height: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: 22% 11%;
+      filter: drop-shadow(3px 6px 8px rgba(0, 0, 0, .32)) drop-shadow(0 2px 3px rgba(0, 0, 0, .2));
+      will-change: left, top, opacity, transform;
+    }
+
+    .product-page.devices-active .device-cursor {
+      animation: deviceCursorClick 5600ms linear 1000ms both;
+    }
+
+    .product-page.devices-active .device-focus {
+      animation: deviceFocusIn 5600ms cubic-bezier(.16, 1, .3, 1) 5100ms both;
+    }
+
+    .device-card-cursor {
+      position: absolute;
+      left: 98%;
+      top: 48%;
+      z-index: 9;
+      width: clamp(46px, 4.7vw, 84px);
+      height: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: 22% 11%;
+      filter: drop-shadow(3px 6px 8px rgba(0, 0, 0, .32)) drop-shadow(0 2px 3px rgba(0, 0, 0, .2));
+      will-change: left, top, opacity, transform;
+    }
+
+    .product-page.devices-active .device-card-cursor {
+      animation: none;
+    }
+
+    .product-page.devices-active .device-detail {
+      animation: none;
+    }
+
+    .product-page.devices-active .product-book-stage {
+      opacity: 0;
+      transform: translate3d(-50%, -18px, 0) scale(.98);
+      transition:
+        opacity 700ms ease,
+        transform 700ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .product-book {
+      position: absolute;
+      top: 11.94%;
+      width: 31.65%;
+      height: auto;
+      display: block;
+      will-change: transform;
+      filter: drop-shadow(0 34px 46px rgba(0, 0, 0, .2));
+    }
+
+    .book-purple {
+      left: 0;
+      z-index: 1;
+    }
+
+    .book-highschool {
+      left: 17.09%;
+      z-index: 2;
+    }
+
+    .book-blue {
+      left: 34.18%;
+      z-index: 3;
+    }
+
+    .book-middle {
+      left: 51.27%;
+      z-index: 4;
+    }
+
+    .book-red {
+      left: 68.35%;
+      z-index: 5;
+    }
+
+    .product-cursor {
+      position: absolute;
+      left: 103.8%;
+      top: 32.84%;
+      z-index: 20;
+      width: 5.7%;
+      height: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: 22% 11%;
+      filter: drop-shadow(3px 6px 8px rgba(0, 0, 0, .4)) drop-shadow(0 2px 3px rgba(0, 0, 0, .275));
+      will-change: left, top, opacity, transform;
+    }
+
+    .product-page.is-active .book-purple,
+    .product-page.is-active .book-blue,
+    .product-page.is-active .book-red {
+      animation: productBookOdd 14200ms linear 1350ms both;
+    }
+
+    .product-page.is-active .book-middle {
+      animation: productBookEven 14200ms linear 1350ms both;
+    }
+
+    .product-page.is-active .book-highschool {
+      animation: productBookSelected 14200ms linear 1350ms both;
+    }
+
+    .product-page.is-active .product-cursor {
+      animation: productCursorClick 14200ms linear 1350ms both;
+    }
+
+    .product-front-book {
+      position: absolute;
+      left: 50%;
+      top: 3%;
+      z-index: 12;
+      height: 92%;
+      width: auto;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-50%) translateY(36px) scale(.78) rotateY(-22deg);
+      transform-origin: center center;
+      filter: drop-shadow(0 36px 54px rgba(0, 0, 0, .34));
+      will-change: opacity, transform;
+      display: none;
+    }
+
+    .product-open-book {
+      --lens-size: clamp(166px, 14.6vw, 264px);
+      position: absolute;
+      left: 50%;
+      top: -10%;
+      z-index: 15;
+      width: min(84vw, 1160px);
+      max-width: 84%;
+      aspect-ratio: 1.56;
+      opacity: 0;
+      pointer-events: none;
+      perspective: 1800px;
+      transform: translateX(-50%) translateY(36px) scale(.76) rotateX(7deg);
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 34px 62px rgba(0, 0, 0, .36));
+      will-change: opacity, transform;
+    }
+
+    .product-page-spread {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+    }
+
+    .product-page-img {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 26px 54px rgba(0, 0, 0, .2);
+      backface-visibility: hidden;
+    }
+
+    .product-page-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-page-left {
+      left: 0;
+      border-radius: 16px 3px 3px 16px;
+      transform-origin: right center;
+    }
+
+    .product-page-right {
+      right: 0;
+      border-radius: 3px 16px 16px 3px;
+      transform-origin: left center;
+    }
+
+    .product-fold {
+      position: absolute;
+      left: calc(50% - 6px);
+      top: 0;
+      z-index: 4;
+      width: 12px;
+      height: 100%;
+      opacity: .92;
+      background: linear-gradient(90deg, rgba(0, 0, 0, .22), rgba(255, 255, 255, .7), rgba(0, 0, 0, .14));
+      pointer-events: none;
+    }
+
+    .book-magnifier {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 30;
+      width: var(--lens-size);
+      height: var(--lens-size);
+      overflow: hidden;
+      border: 6px solid #000;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        0 18px 38px rgba(0, 0, 0, .32),
+        inset 0 0 0 3px rgba(255, 255, 255, .92);
+      transition: opacity 180ms ease;
+      will-change: left, top, opacity;
+    }
+
+    .book-magnifier-handle {
+      --lens-size: clamp(166px, 14.6vw, 264px);
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 31;
+      width: calc(var(--lens-size) * .58);
+      height: calc(var(--lens-size) * .11);
+      border-radius: 999px;
+      background: #000;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 7px 16px rgba(0, 0, 0, .28);
+      transform: translate(calc(var(--lens-size) * .3), calc(var(--lens-size) * .3)) rotate(45deg);
+      transform-origin: left center;
+      transition: opacity 180ms ease;
+      will-change: left, top, opacity;
+    }
+
+    .product-open-book.magnifier-active .book-magnifier,
+    .product-open-book.magnifier-active .book-magnifier-handle {
+      opacity: 1;
+    }
+
+    .book-magnifier-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--book-magnifier-width, 1000px);
+      height: var(--book-magnifier-height, 640px);
+      transform-origin: 0 0;
+      will-change: transform;
+    }
+
+    .book-magnifier-page {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .book-magnifier-page img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .book-magnifier-left {
+      left: 0;
+    }
+
+    .book-magnifier-right {
+      right: 0;
+    }
+
+    .book-magnifier-fold {
+      position: absolute;
+      left: calc(50% - 6px);
+      top: 0;
+      z-index: 2;
+      width: 12px;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(0, 0, 0, .22), rgba(255, 255, 255, .7), rgba(0, 0, 0, .14));
+    }
+
+    .product-page.is-active .product-front-book {
+      animation: none;
+    }
+
+    .product-page.is-active .product-open-book {
+      animation: productOpenBook 14200ms linear 1350ms both;
+    }
+
+    .product-page.is-active .product-page-left {
+      animation: productOpenLeft 14200ms cubic-bezier(.19, 1, .22, 1) 1350ms both;
+    }
+
+    .product-page.is-active .product-page-right {
+      animation: productOpenRight 14200ms cubic-bezier(.19, 1, .22, 1) 1350ms both;
+    }
+
+    @media (max-width: 2200px), (max-height: 1200px) {
+      .product-page {
+        --product-devices-bottom: clamp(78px, 6vh, 112px);
+        --product-devices-width: min(66vw, 1060px);
+        --product-devices-height: min(30.98vw, 498px);
+      }
+
+      .product-copy {
+        z-index: 18;
+        padding-top: clamp(72px, 8.6vh, 112px);
+      }
+
+      .product-title {
+        font-size: clamp(44px, 4.2vw, 66px);
+      }
+
+      .product-kicker {
+        margin-top: 14px;
+        font-size: clamp(22px, 1.7vw, 28px);
+      }
+
+      .product-book-stage {
+        bottom: clamp(54px, 5.6vh, 88px);
+        width: min(61vw, 1160px);
+      }
+
+      .product-open-book {
+        --lens-size: clamp(132px, 11.2vw, 210px);
+        top: 5%;
+        width: min(65vw, 980px);
+        max-width: 76%;
+      }
+
+      .book-magnifier-handle {
+        --lens-size: clamp(132px, 11.2vw, 210px);
+      }
+
+      .device-focus,
+      .device-detail,
+      .device-mode-hitbox {
+        top: calc(100vh - var(--product-devices-bottom) - var(--product-devices-height) - 54px);
+        width: min(66vw, 1060px);
+      }
+    }
+
+    @keyframes aiTwinkle {
+      0% {
+        opacity: .35;
+        filter: brightness(.86);
+      }
+
+      25% {
+        opacity: .95;
+        filter: brightness(1.38);
+      }
+
+      50% {
+        opacity: .55;
+        filter: brightness(1);
+      }
+
+      75% {
+        opacity: .82;
+        filter: brightness(1.25);
+      }
+
+      100% {
+        opacity: .42;
+        filter: brightness(.92);
+      }
+    }
+
+    @keyframes brainGlow {
+      0%, 100% {
+        opacity: .48;
+        transform: scale(.96);
+      }
+
+      50% {
+        opacity: .94;
+        transform: scale(1.04);
+      }
+    }
+
+    @keyframes brainBlink {
+      0%, 100% {
+        opacity: .96;
+        transform: scale(1);
+        filter: brightness(1.02);
+      }
+
+      12% {
+        opacity: .38;
+        transform: scale(.985);
+        filter: brightness(.72);
+      }
+
+      22% {
+        opacity: 1;
+        transform: scale(1.035);
+        filter: brightness(1.26);
+      }
+
+      40% {
+        opacity: .42;
+        transform: scale(.99);
+        filter: brightness(.78);
+      }
+
+      52% {
+        opacity: 1;
+        transform: scale(1.03);
+        filter: brightness(1.22);
+      }
+
+      70% {
+        opacity: .42;
+        transform: scale(.99);
+        filter: brightness(.78);
+      }
+
+      84% {
+        opacity: 1;
+        transform: scale(1.03);
+        filter: brightness(1.22);
+      }
+    }
+
+    @keyframes orbitSpin {
+      to {
+        transform: translate(-50%, -50%) scale(1) rotate(360deg);
+      }
+    }
+
+    @keyframes aiImagePulse {
+      0%, 100% {
+        opacity: .9;
+        filter: saturate(1.18) brightness(1.08) contrast(1.08);
+      }
+
+      50% {
+        opacity: 1;
+        filter: saturate(1.36) brightness(1.28) contrast(1.14);
+      }
+    }
+
+    @keyframes productBookOdd {
+      0%, 7.04% { opacity: 1; transform: translateY(0); }
+      10.74% { opacity: 1; transform: translateY(-32px); }
+      14.44% { opacity: 1; transform: translateY(0); }
+      18.14% { opacity: 1; transform: translateY(32px); }
+      21.83% { opacity: 1; transform: translateY(0); }
+      25.53% { opacity: 1; transform: translateY(-32px); }
+      29.23% { opacity: 1; transform: translateY(0); }
+      32.92% { opacity: 1; transform: translateY(32px); }
+      36.62%, 64.44% { opacity: 1; transform: translateY(0); }
+      70%, 100% { opacity: 0; transform: translateY(0) scale(.92); }
+    }
+
+    @keyframes productBookEven {
+      0%, 7.04% { opacity: 1; transform: translateY(0); }
+      10.74% { opacity: 1; transform: translateY(20px); }
+      14.44% { opacity: 1; transform: translateY(0); }
+      18.14% { opacity: 1; transform: translateY(-20px); }
+      21.83% { opacity: 1; transform: translateY(0); }
+      25.53% { opacity: 1; transform: translateY(20px); }
+      29.23% { opacity: 1; transform: translateY(0); }
+      32.92% { opacity: 1; transform: translateY(-20px); }
+      36.62%, 64.44% { opacity: 1; transform: translateY(0); }
+      70%, 100% { opacity: 0; transform: translateY(0) scale(.92); }
+    }
+
+    @keyframes productBookSelected {
+      0%, 7.04% { opacity: 1; transform: translateY(0); }
+      10.74% { opacity: 1; transform: translateY(20px); }
+      14.44% { opacity: 1; transform: translateY(0); }
+      18.14% { opacity: 1; transform: translateY(-20px); }
+      21.83% { opacity: 1; transform: translateY(0); }
+      25.53% { opacity: 1; transform: translateY(20px); }
+      29.23% { opacity: 1; transform: translateY(0); }
+      32.92% { opacity: 1; transform: translateY(-20px); }
+      36.62%, 64.44% { opacity: 1; transform: translateY(0); }
+      68.31% { opacity: 1; transform: translateY(-64px); }
+      78.17%, 82% { opacity: 1; transform: translateX(54%) translateY(-116px) scale(1.12); }
+      84%, 100% { opacity: 0; transform: translateX(54%) translateY(-116px) scale(1.12); }
+    }
+
+    @keyframes productCursorClick {
+      0%, 54.23% {
+        left: 103.8%;
+        top: 32.84%;
+        opacity: 0;
+        transform: scale(1);
+      }
+
+      54.24% {
+        left: 103.8%;
+        top: 32.84%;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      61.27% {
+        left: 30.38%;
+        top: 17.16%;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      62.68% {
+        left: 30.38%;
+        top: 17.16%;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      63.56% {
+        left: 30.38%;
+        top: 17.16%;
+        opacity: 1;
+        transform: scale(.78);
+      }
+
+      64.44% {
+        left: 30.38%;
+        top: 17.16%;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      70%, 100% {
+        left: 30.38%;
+        top: 17.16%;
+        opacity: 0;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes productFrontBook {
+      0%, 100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0) scale(.9);
+      }
+    }
+
+    @keyframes productOpenBook {
+      0%, 86% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-36px) scale(.86) rotateX(7deg);
+      }
+
+      92%, 100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-44px) scale(.94) rotateX(7deg);
+      }
+    }
+
+    @keyframes productOpenLeft {
+      0%, 86% {
+        transform: rotateY(52deg);
+      }
+
+      94%, 100% {
+        transform: rotateY(0);
+      }
+    }
+
+    @keyframes productOpenRight {
+      0%, 86% {
+        transform: rotateY(-52deg);
+      }
+
+      94%, 100% {
+        transform: rotateY(0);
+      }
+    }
+
+    @keyframes productDevicesOut {
+      0%, 12% {
+        opacity: 0;
+        transform: translate3d(-50%, 38px, 0) scale(.985);
+      }
+
+      25%, 64% {
+        opacity: 1;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+
+      64.1%, 100% {
+        opacity: 0;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes deviceCursorClick {
+      0%, 12% {
+        left: 98%;
+        top: var(--device-click-top);
+        opacity: 0;
+        transform: scale(1);
+      }
+
+      13% {
+        left: 98%;
+        top: var(--device-click-top);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      48% {
+        left: var(--device-click-left);
+        top: var(--device-click-top);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      58% {
+        left: var(--device-click-left);
+        top: var(--device-click-top);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      64% {
+        left: var(--device-click-left);
+        top: var(--device-click-top);
+        opacity: 1;
+        transform: scale(.78);
+      }
+
+      70% {
+        left: var(--device-click-left);
+        top: var(--device-click-top);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      82%, 100% {
+        left: var(--device-click-left);
+        top: var(--device-click-top);
+        opacity: 0;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes deviceFocusIn {
+      0% {
+        opacity: 0;
+        transform: translate3d(-50%, 42px, 0) scale(.72);
+      }
+
+      14%, 100% {
+        opacity: 1;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes deviceModeHitboxIn {
+      0%, 13.9% {
+        pointer-events: none;
+      }
+
+      14%, 100% {
+        pointer-events: auto;
+      }
+    }
+
+    @keyframes deviceCardCursorClick {
+      0%, 60% {
+        left: 98%;
+        top: 48%;
+        opacity: 0;
+        transform: scale(1);
+      }
+
+      61% {
+        left: 98%;
+        top: 48%;
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      75% {
+        left: 30.5%;
+        top: calc(43.5% + 30px);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      82% {
+        left: 30.5%;
+        top: calc(43.5% + 30px);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      86% {
+        left: 30.5%;
+        top: calc(43.5% + 30px);
+        opacity: 1;
+        transform: scale(.78);
+      }
+
+      90% {
+        left: 30.5%;
+        top: calc(43.5% + 30px);
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      96%, 100% {
+        left: 30.5%;
+        top: calc(43.5% + 30px);
+        opacity: 0;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes deviceDetailIn {
+      0%, 86% {
+        opacity: 0;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+
+      94%, 100% {
+        opacity: 1;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+    }
+
+    .method-page {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      padding: clamp(78px, 8.8vh, 104px) clamp(42px, 4.2vw, 80px) clamp(54px, 6vh, 76px);
+      background: #10163B;
+      color: #fff;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      isolation: isolate;
+    }
+
+    .method-page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 50% 82%, rgba(58, 65, 138, .34) 0 18%, rgba(26, 35, 84, .2) 34%, transparent 58%),
+        linear-gradient(180deg, #10163B 0%, #10163B 100%);
+      pointer-events: none;
+    }
+
+    .page-title-block {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(40px);
+      transition:
+        opacity 1000ms ease,
+        transform 1350ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .is-active > .page-title-block {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-title {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(50px, 5vw, 78px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .method-page .page-title {
+      font-size: clamp(40px, 4vw, 62px);
+    }
+
+    .page-subtitle {
+      margin: 18px 0 0;
+      color: rgba(255, 255, 255, .62);
+      font-size: clamp(22px, 1.8vw, 32px);
+      line-height: 1.18;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .method-board {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(330px, 480px) 1fr;
+      gap: clamp(36px, 3vw, 52px);
+      width: min(92vw, 1760px);
+      margin: clamp(54px, 6.5vh, 74px) auto 0;
+      opacity: 0;
+      transform: translateY(34px);
+      transition:
+        opacity 900ms ease 700ms,
+        transform 1200ms cubic-bezier(.16, 1, .3, 1) 700ms;
+    }
+
+    .method-page.is-active .method-board {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .method-steps {
+      display: grid;
+      gap: clamp(18px, 2vh, 22px);
+    }
+
+    .method-step {
+      min-height: clamp(104px, 12vh, 130px);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 20px;
+      padding: 26px 38px 26px 42px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 14px;
+      background: rgba(48, 55, 92, .82);
+      color: #fff;
+      cursor: pointer;
+      text-align: left;
+      transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease,
+        transform 220ms ease;
+    }
+
+    .method-step:hover {
+      transform: translateY(0);
+      border-color: rgba(151, 114, 232, .55);
+    }
+
+    .method-step.is-selected {
+      border-color: #9b72f2;
+      box-shadow:
+        inset 0 0 22px rgba(151, 114, 232, .32),
+        0 0 0 1px rgba(151, 114, 232, .38),
+        0 0 18px rgba(151, 114, 232, .38);
+      background: rgba(48, 55, 92, .94);
+    }
+
+    .method-step-number {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #8b6adf;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .method-step-label {
+      color: #fff;
+      font-size: clamp(34px, 2.45vw, 46px);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .method-step-icon {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+    }
+
+    .method-step-icon-write {
+      width: 52px;
+      height: 52px;
+    }
+
+    .method-card {
+      --method-cn-prompt-size: clamp(28px, calc(3.2vw - 6px), 44px);
+      --method-option-size: clamp(22px, 1.8vw, 31px);
+      position: relative;
+      height: clamp(560px, 68vh, 734px);
+      padding: clamp(32px, 3.3vw, 54px);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 16px;
+      background: rgba(48, 55, 92, .86);
+      text-align: center;
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .method-progress {
+      margin: 0;
+      color: rgba(255, 255, 255, .94);
+      font-size: clamp(12px, 1.4vw, 18px);
+      line-height: 1;
+      font-weight: 400;
+    }
+
+    .method-question {
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      padding: clamp(26px, 4vh, 44px) clamp(86px, 8vw, 132px) 0;
+    }
+
+    .method-english {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(34px, 3.2vw, 50px);
+      line-height: 1.1;
+      font-weight: 400;
+      letter-spacing: 0;
+    }
+
+    .method-card.is-select-mode .method-question {
+      padding-top: 0;
+    }
+
+    .method-card.is-select-mode .method-translation {
+      order: 1;
+      margin: 0;
+      color: #fff;
+    }
+
+    .method-card.is-select-mode .method-english {
+      order: 2;
+      margin-top: clamp(16px, 2.1vh, 23px);
+    }
+
+    .method-blank {
+      display: inline-block;
+      width: clamp(110px, 10vw, 190px);
+      height: .8em;
+      margin-left: .22em;
+      border-bottom: 2px solid #20d22b;
+      vertical-align: baseline;
+    }
+
+    .method-card.is-select-mode.is-answered .method-blank {
+      width: auto;
+      min-width: 0;
+      height: auto;
+      border-bottom: 0;
+    }
+
+    .method-filled-answer {
+      display: inline-block;
+      padding-bottom: .08em;
+      border-bottom: 2px solid currentColor;
+      line-height: 1;
+    }
+
+    .method-answer-correct {
+      color: #20d22b;
+    }
+
+    .method-answer-wrong {
+      color: #ef5663;
+    }
+
+    .method-card.is-select-mode .method-phonetic,
+    .method-card.is-select-mode .method-prompt {
+      display: none;
+    }
+
+    .method-card.is-select-mode .method-options {
+      order: 3;
+      gap: clamp(25px, 2.7vw, 34px);
+      margin-top: clamp(30px, 5vh, 50px);
+    }
+
+    .method-card.is-select-mode .method-option {
+      min-width: clamp(145px, 11vw, 198px);
+      height: clamp(48px, 5.5vh, 60px);
+      padding: 0 22px;
+      font-weight: 400;
+    }
+
+    .method-card.is-order-mode .method-question {
+      align-content: center;
+      padding-top: 0;
+    }
+
+    .method-card.is-order-mode .method-phonetic {
+      display: none;
+    }
+
+    .method-card.is-order-mode .method-translation {
+      order: 1;
+      margin: 0;
+      color: #fff;
+    }
+
+    .method-card.is-order-mode .method-english {
+      order: 2;
+      margin-top: clamp(30px, 5vh, 50px);
+    }
+
+    .method-card.is-order-mode .method-prompt {
+      order: 3;
+      margin-top: clamp(16px, 2.1vh, 23px);
+    }
+
+    .method-order-answer {
+      order: 4;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: clamp(18px, 2vw, 28px);
+      min-height: clamp(50px, 5.4vh, 62px);
+      margin-top: clamp(24px, 3.4vh, 38px);
+      max-width: min(78vw, 940px);
+    }
+
+    .method-order-answer[hidden] {
+      display: none;
+    }
+
+    .method-order-chip {
+      min-width: 0;
+      height: auto;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      font-size: clamp(34px, 3.2vw, 50px);
+      font-weight: 400;
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .method-order-chip.method-highlight {
+      color: #20d22b;
+    }
+
+    .method-card.is-order-mode .method-options {
+      order: 5;
+      flex-wrap: wrap;
+      align-items: center;
+      max-width: min(78vw, 940px);
+      row-gap: clamp(18px, 2.2vh, 28px);
+    }
+
+    .method-card.is-order-mode .method-option {
+      flex: 0 1 auto;
+    }
+
+    .method-card.is-order-mode .method-option.is-used {
+      display: none;
+    }
+
+    .method-card.is-speak-mode .method-question {
+      align-content: center;
+      padding-top: 0;
+    }
+
+    .method-card.is-write-mode .method-question {
+      align-content: center;
+      padding-top: 0;
+    }
+
+    .method-card.is-speak-mode .method-translation {
+      order: 1;
+      margin: 0;
+      color: #fff;
+    }
+
+    .method-card.is-write-mode .method-translation {
+      order: 1;
+      margin: 0;
+      color: #fff;
+    }
+
+    .method-card.is-speak-mode .method-english {
+      order: 2;
+      margin-top: clamp(16px, 2.1vh, 23px);
+    }
+
+    .method-card.is-write-mode .method-english {
+      order: 2;
+      margin-top: clamp(30px, 5vh, 50px);
+    }
+
+    .method-card.is-speak-mode .method-phonetic,
+    .method-card.is-speak-mode .method-prompt,
+    .method-card.is-speak-mode .method-options {
+      display: none;
+    }
+
+    .method-card.is-write-mode .method-phonetic,
+    .method-card.is-write-mode .method-prompt,
+    .method-card.is-write-mode .method-options,
+    .method-card.is-write-mode .method-speak-button {
+      display: none;
+    }
+
+    .method-write-input {
+      width: clamp(110px, 10vw, 190px);
+      margin-left: .22em;
+      padding: 0 0 .08em;
+      border: 0;
+      border-bottom: 2px solid #20d22b;
+      border-radius: 0;
+      outline: 0;
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      line-height: 1;
+      text-align: left;
+      caret-color: #fff;
+      vertical-align: baseline;
+    }
+
+    .method-write-input.is-wrong {
+      color: #ef5663;
+      border-bottom-color: #ef5663;
+    }
+
+    .method-write-input::placeholder {
+      color: transparent;
+    }
+
+    .method-write-answer {
+      order: 3;
+      margin-top: clamp(30px, 5vh, 50px);
+      color: #20d22b;
+      font-size: clamp(34px, 3.2vw, 50px);
+      line-height: 1.1;
+      font-weight: 400;
+    }
+
+    .method-write-answer[hidden] {
+      display: none;
+    }
+
+    .method-speak-button {
+      display: none;
+    }
+
+    .method-card.is-speak-mode .method-speak-button {
+      order: 3;
+      display: grid;
+      place-items: center;
+      width: clamp(50px, 4.8vw, 72px);
+      height: clamp(50px, 4.8vw, 72px);
+      margin-top: clamp(72px, 10vh, 120px);
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      transition: transform 180ms ease, opacity 180ms ease;
+    }
+
+    .method-card.is-speak-mode .method-speak-button[hidden] {
+      display: none;
+    }
+
+    .method-speak-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .method-speak-button.is-listening {
+      animation: methodMicPulse 620ms ease-in-out infinite alternate;
+    }
+
+    .method-speak-button img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .method-order-result {
+      display: grid;
+      justify-items: center;
+      gap: clamp(30px, 4.5vh, 48px);
+      width: 100%;
+    }
+
+    .method-order-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: .38em;
+      flex-wrap: wrap;
+    }
+
+    .method-order-divider {
+      width: min(70%, 760px);
+      height: 1px;
+      background: rgba(255, 255, 255, .45);
+    }
+
+    .method-result-icon {
+      width: clamp(17px, 1.8vw, 29px);
+      height: clamp(17px, 1.8vw, 29px);
+      object-fit: contain;
+      flex: 0 0 auto;
+      transform: translateY(-1px);
+    }
+
+    .method-highlight {
+      color: #20d22b;
+    }
+
+    .method-phonetic {
+      margin: 28px 0 0;
+      color: rgba(255, 255, 255, .36);
+      font-size: clamp(22px, 1.98vw, 32px);
+      line-height: 1.08;
+      font-weight: 400;
+    }
+
+    .method-phonetic .method-part {
+      color: #a07bf3;
+    }
+
+    .method-prompt,
+    .method-translation {
+      margin: clamp(30px, 5vh, 50px) 0 0;
+      min-height: 1.25em;
+      color: rgba(255, 255, 255, .52);
+      font-size: var(--method-cn-prompt-size);
+      line-height: 1.18;
+      font-weight: 400;
+    }
+
+    .method-prompt {
+      font-size: var(--method-cn-prompt-size);
+    }
+
+    .method-translation {
+      color: #fff;
+    }
+
+    .method-options {
+      display: flex;
+      justify-content: center;
+      gap: clamp(25px, 2.7vw, 34px);
+      margin-top: clamp(30px, 5vh, 50px);
+    }
+
+    .method-option {
+      min-width: clamp(145px, 11vw, 198px);
+      height: clamp(48px, 5.5vh, 60px);
+      padding: 0 22px;
+      border: 0;
+      border-radius: 999px;
+      background: #525b80;
+      color: #fff;
+      font-size: var(--method-option-size);
+      font-weight: 400;
+      cursor: pointer;
+      transition:
+        background 180ms ease,
+        transform 180ms ease;
+    }
+
+    .method-option.is-english {
+      font-size: var(--method-option-size);
+    }
+
+    .method-option:hover {
+      transform: translateY(-1px);
+    }
+
+    .method-option.is-correct {
+      background: #2dc339;
+    }
+
+    .method-option.is-wrong {
+      background: #ef5663;
+    }
+
+    @keyframes methodMicPulse {
+      from {
+        opacity: .72;
+        transform: scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    .method-prev,
+    .method-next {
+      position: absolute;
+      top: 50%;
+      width: 43px;
+      height: 43px;
+      padding: 0;
+      border: 0;
+      color: transparent;
+      cursor: pointer;
+      transform: translateY(-50%);
+    }
+
+    .method-prev {
+      left: clamp(34px, 3vw, 48px);
+      background: url("assets/page-06/left.svg") center / contain no-repeat;
+    }
+
+    .method-next {
+      right: clamp(34px, 3vw, 48px);
+      background: url("assets/page-06/right.svg") center / contain no-repeat;
+    }
+
+    .method-prev[hidden],
+    .method-next[hidden] {
+      display: none;
+    }
+
+    html:not([data-current-page="03"]) .word-cloud,
+    html:not([data-current-page="03"]) .phrase-layer,
+    html:not([data-current-page="03"]) .phrase-layer-next {
+      opacity: 0;
+      pointer-events: none;
+      transition-duration: 180ms;
+      transition-delay: 0ms;
+    }
+
+    @keyframes wordFloat {
+      from {
+        transform: translate3d(-50%, calc(-50% - var(--amp)), 0);
+      }
+
+      to {
+        transform: translate3d(-50%, calc(-50% + var(--amp)), 0);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .final-logo {
+        width: min(420px, 84vw);
+      }
+
+      .pain-page {
+        padding: 48px 18px;
+      }
+
+      .pain-cards {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-top: 32px;
+      }
+
+      .pain-card {
+        min-height: 420px;
+        border-radius: 34px;
+      }
+
+      .micro-page {
+        height: 100vh;
+        min-height: 100vh;
+      }
+
+      .micro-lines {
+        gap: 48px;
+      }
+
+      .micro-line {
+        font-size: clamp(42px, 12vw, 64px);
+      }
+
+      .micro-line:nth-child(1),
+      .micro-line:nth-child(2),
+      .micro-line:nth-child(3) {
+        font-size: clamp(42px, 12vw, 64px);
+      }
+
+      .float-word {
+        font-size: clamp(28px, 9vw, 44px);
+      }
+
+      .ai-content {
+        width: min(100% - 36px, 560px);
+        padding-left: 0;
+      }
+
+      .ai-kicker {
+        font-size: clamp(26px, 7vw, 28.8pt);
+      }
+
+      .ai-title {
+        font-size: clamp(44px, 12vw, 72pt);
+      }
+
+      .ai-copy {
+        font-size: clamp(20px, 5vw, 21.6pt);
+      }
+
+      .ai-visual img {
+        right: -34vw;
+        width: 118vw;
+        opacity: .46;
+      }
+
+      .ai-brain {
+        left: 72%;
+        top: 22%;
+        width: min(46vw, 330px);
+      }
+
+      .ai-page.brain-centered .ai-brain {
+        left: 50%;
+        top: 50%;
+        width: min(78vw, 520px);
+      }
+
+      .product-copy {
+        padding-top: clamp(84px, 11vh, 118px);
+      }
+
+      .product-title {
+        font-size: clamp(42px, 12vw, 64px);
+      }
+
+      .product-kicker {
+        margin-top: 16px;
+        font-size: clamp(22px, 6.5vw, 30px);
+      }
+
+      .product-book-stage {
+        bottom: clamp(112px, calc(13vh + 20px), 150px);
+        width: min(116vw, 880px);
+      }
+
+      .product-page {
+        --product-devices-bottom: clamp(132px, calc(11vh + 40px), 164px);
+        --product-devices-width: min(118vw, 880px);
+        --product-devices-height: min(55.47vw, 414px);
+      }
+
+      .product-devices {
+        bottom: var(--product-devices-bottom);
+        width: var(--product-devices-width);
+      }
+
+      .device-focus,
+      .device-detail {
+        width: min(112vw, 930px);
+      }
+
+      .product-book {
+        filter: drop-shadow(0 24px 34px rgba(0, 0, 0, .18));
+      }
+
+      .method-page {
+        padding: 72px 18px 40px;
+      }
+
+      .page-title {
+        font-size: clamp(42px, 12vw, 64px);
+      }
+
+      .method-page .page-title {
+        font-size: clamp(34px, 9.6vw, 51px);
+      }
+
+      .page-subtitle {
+        margin-top: 14px;
+        font-size: clamp(20px, 5.8vw, 28px);
+      }
+
+      .method-board {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        width: min(94vw, 620px);
+        margin-top: 34px;
+      }
+
+      .method-steps {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+      }
+
+      .method-step {
+        min-height: 78px;
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 6px;
+        padding: 12px 8px;
+        text-align: center;
+      }
+
+      .method-step-number {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+      }
+
+      .method-step-label {
+        font-size: 25px;
+      }
+
+      .method-step-icon {
+        display: none;
+      }
+
+      .method-card {
+        height: 520px;
+        padding: 28px 18px;
+      }
+
+      .method-question {
+        padding: 22px 42px 0;
+      }
+
+      .method-options {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        margin-top: 42px;
+      }
+
+      .method-option {
+        width: min(72vw, 280px);
+      }
+
+      .method-next {
+        right: 12px;
+        width: 48px;
+      }
+    }
+    @media (max-width: 2200px), (max-height: 1200px) {
+      .product-page {
+        --product-devices-bottom: clamp(102px, calc(11vh - 30px), 144px);
+        --product-devices-width: min(64.8vw, 1008px);
+        --product-devices-height: min(30.47vw, 474px);
+      }
+
+      .product-copy {
+        z-index: 24;
+        padding-top: clamp(56px, 6.8vh, 88px);
+        transition:
+          opacity 620ms ease,
+          transform 720ms cubic-bezier(.16, 1, .3, 1);
+      }
+
+      .product-title {
+        font-size: clamp(40px, 3.8vw, 60px);
+      }
+
+      .product-kicker {
+        margin-top: 12px;
+        font-size: clamp(20px, 1.55vw, 26px);
+      }
+
+      .product-book-stage {
+        bottom: calc(clamp(42px, 4.8vh, 76px) + 30px);
+        width: min(67.2vw, 1176px);
+      }
+
+      .product-open-book {
+        --lens-size: clamp(132px, 11.28vw, 211px);
+        top: calc(24% - 174px);
+        width: min(64.5vw, 1320px);
+        max-width: 96%;
+      }
+
+      .book-magnifier-handle {
+        --lens-size: clamp(132px, 11.28vw, 211px);
+      }
+
+      .device-focus,
+      .device-detail,
+      .device-mode-hitbox {
+        top: calc(100vh - var(--product-devices-bottom) - var(--product-devices-height) - 12px);
+        width: var(--product-devices-width);
+      }
+
+      .product-devices {
+        width: var(--product-devices-width);
+      }
+
+      .product-page.devices-active .product-copy {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+    }
+
+    @media (max-width: 900px), (max-height: 680px) {
+      .product-page {
+        --product-devices-bottom: clamp(62px, calc(8.8vh - 30px), 92px);
+        --product-devices-width: min(75.6vw, 774px);
+        --product-devices-height: min(35.54vw, 364px);
+      }
+
+      .product-copy {
+        padding-top: clamp(42px, 5.8vh, 66px);
+      }
+
+      .product-title {
+        font-size: clamp(34px, 6vw, 48px);
+      }
+
+      .product-book-stage {
+        bottom: calc(clamp(36px, 4.4vh, 62px) + 30px);
+        width: min(84vw, 864px);
+      }
+
+      .product-open-book {
+        top: calc(27% - 174px);
+        width: min(88vw, 920px);
+        max-width: 98%;
+      }
+
+      .device-focus,
+      .device-detail,
+      .device-mode-hitbox {
+        top: calc(100vh - var(--product-devices-bottom) - var(--product-devices-height) - 6px);
+      }
+    }
+
+    @media (max-width: 2200px), (max-height: 1200px) {
+      .method-page {
+        min-height: 100vh;
+        overflow: hidden;
+        padding: clamp(48px, 5.4vh, 64px) clamp(34px, 3.4vw, 64px) clamp(34px, 4vh, 48px);
+      }
+
+      .method-page .page-title {
+        font-size: clamp(42px, 3.65vw, 58px);
+      }
+
+      .page-subtitle {
+        margin-top: clamp(10px, 1.4vh, 16px);
+        font-size: clamp(22px, 1.65vw, 28px);
+      }
+
+      .method-board {
+        grid-template-columns: minmax(300px, 440px) 1fr;
+        gap: clamp(28px, 2.6vw, 42px);
+        width: min(92vw, 1660px);
+        margin-top: clamp(32px, 4.2vh, 48px);
+      }
+
+      .method-steps {
+        gap: clamp(10px, 1.45vh, 16px);
+      }
+
+      .method-step {
+        min-height: clamp(78px, 8.4vh, 98px);
+        gap: 16px;
+        padding: clamp(14px, 1.7vh, 20px) clamp(24px, 2.4vw, 34px);
+      }
+
+      .method-step-number {
+        width: clamp(38px, 3.3vw, 46px);
+        height: clamp(38px, 3.3vw, 46px);
+        font-size: clamp(18px, 1.5vw, 22px);
+      }
+
+      .method-step-label {
+        font-size: clamp(30px, 2.25vw, 40px);
+      }
+
+      .method-step-icon {
+        width: clamp(42px, 4vw, 54px);
+        height: clamp(42px, 4vw, 54px);
+      }
+
+      .method-step-icon-write {
+        width: clamp(38px, 3.7vw, 50px);
+        height: clamp(38px, 3.7vw, 50px);
+      }
+
+      .method-card {
+        height: clamp(500px, 59vh, 660px);
+        padding: clamp(26px, 2.7vw, 42px);
+      }
+
+      .method-question {
+        padding: clamp(18px, 3vh, 34px) clamp(58px, 6.5vw, 104px) 0;
+      }
+
+      .method-english,
+      .method-order-chip,
+      .method-write-answer {
+        font-size: clamp(30px, 2.75vw, 44px);
+      }
+    }
+
+    @media (max-width: 900px), (max-height: 680px) {
+      .method-page {
+        min-height: 100vh;
+        height: auto;
+        overflow-y: auto;
+        padding: 42px 18px 40px;
+      }
+    }
+    @media (max-width: 1512px) {
+      .method-card {
+        --method-cn-prompt-size: clamp(25px, calc(2.88vw - 5px), 40px);
+        --method-option-size: clamp(20px, 1.62vw, 28px);
+      }
+
+      .method-question {
+        padding-left: clamp(42px, 5.5vw, 92px);
+        padding-right: clamp(42px, 5.5vw, 92px);
+      }
+
+      .method-progress {
+        font-size: clamp(11px, 1.26vw, 16px);
+      }
+
+      .method-english,
+      .method-order-chip,
+      .method-write-answer {
+        font-size: clamp(27px, 2.48vw, 40px);
+      }
+
+      .method-phonetic {
+        font-size: clamp(20px, 1.78vw, 29px);
+      }
+
+      .method-prompt,
+      .method-translation {
+        margin-top: clamp(27px, 4.5vh, 45px);
+      }
+
+      .method-options {
+        gap: clamp(22px, 2.43vw, 31px);
+        margin-top: clamp(27px, 4.5vh, 45px);
+      }
+
+      .method-option {
+        min-width: clamp(131px, 9.9vw, 178px);
+        height: clamp(43px, 4.95vh, 54px);
+        padding: 0 20px;
+      }
+
+      .method-prev,
+      .method-next {
+        width: 39px;
+        height: 39px;
+      }
+
+      .method-prev {
+        left: clamp(28px, 2.7vw, 42px);
+      }
+
+      .method-next {
+        right: clamp(28px, 2.7vw, 42px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- OPENING: 开场动画｜MP4 自动播放 + Logo 定格 -->
+    <section id="hero" class="hero-sequence" data-page="OPENING" data-page-title="开场动画" aria-label="小词块滚动首屏">
+      <div class="hero-sticky">
+        <video
+          id="introVideo"
+          class="hero-video"
+          src="assets/scroll-hero/video/intro-new.mp4"
+          autoplay
+          muted
+          playsinline
+          preload="auto"
+        ></video>
+        <div class="clean-bg" aria-hidden="true"></div>
+        <div class="video-dim" aria-hidden="true"></div>
+        <img class="final-logo" src="assets/scroll-hero/logo/logo-final.png" alt="小词块">
+      </div>
+    </section>
+
+    <!-- PAGE 02: 传统记单词痛点页｜memory -->
+    <section id="page-02" class="deck-page pain-page" data-page="02" data-page-title="传统记单词痛点页">
+      <div class="pain-inner">
+        <header class="pain-title">
+          <h2>传统记单词</h2>
+          <p>memory</p>
+        </header>
+
+        <div class="pain-cards" aria-label="传统记单词的三个痛点">
+          <article class="pain-card">
+            <img src="assets/page-02/card-memory-hard.png" alt="">
+            <div class="pain-copy">
+              <h3>死记硬背</h3>
+              <p>枯燥无味，容易遗忘</p>
+            </div>
+          </article>
+
+          <article class="pain-card">
+            <img src="assets/page-02/card-complex.png" alt="">
+            <div class="pain-copy">
+              <h3>复杂繁琐</h3>
+              <p>学习门槛高，难以坚持</p>
+            </div>
+          </article>
+
+          <article class="pain-card">
+            <img src="assets/page-02/card-low-efficiency.png" alt="">
+            <div class="pain-copy">
+              <h3>效率低下</h3>
+              <p>句子冗长，文章啰嗦</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 03: 微语境概念引入页｜三行文字依次上浮淡入 -->
+    <section id="page-03" class="deck-page micro-page" data-page="03" data-page-title="微语境概念引入页" data-version="page03-no-parent-opacity-v3">
+      <div class="micro-stage">
+        <div class="micro-lines">
+          <div class="micro-line">小词块</div>
+          <div class="micro-line">微语境快速记单词</div>
+          <div class="micro-line">那什么是<span class="accent">微语境</span>?</div>
+        </div>
+
+        <div class="word-cloud" aria-hidden="true">
+          <span class="float-word primary-word" style="--x: 18%; --y: 12%; --cx: 50%; --cy: 31%; --px: 43%; --py: 31%; --dur: 3.8s; --delay: -.4s; --amp: 13px;">approach</span>
+          <span class="float-word extra-word" style="--x: 66%; --y: 11%; --dur: 4.7s; --delay: -1.1s; --amp: 18px;">gradually</span>
+          <span class="float-word primary-word" style="--x: 43%; --y: 22%; --cx: 50%; --cy: 71%; --px: 50%; --py: 71%; --dur: 3.4s; --delay: -.8s; --amp: 12px;">awkward</span>
+          <span class="float-word extra-word" style="--x: 87%; --y: 25%; --dur: 5.1s; --delay: -2.2s; --amp: 16px;">mollify</span>
+          <span class="float-word primary-word" style="--x: 24%; --y: 32%; --cx: 50%; --cy: 44%; --px: 42%; --py: 44%; --dur: 4.1s; --delay: -1.6s; --amp: 15px;">explore</span>
+          <span class="float-word extra-word" style="--x: 75%; --y: 39%; --dur: 3.6s; --delay: -.2s; --amp: 10px;">sorrow</span>
+          <span class="float-word primary-word" style="--x: 11%; --y: 46%; --cx: 50%; --cy: 57%; --px: 43%; --py: 57%; --dur: 5.3s; --delay: -2.7s; --amp: 17px;">slip</span>
+          <span class="float-word extra-word" style="--x: 26%; --y: 54%; --dur: 4.4s; --delay: -1.3s; --amp: 14px;">prefer</span>
+          <span class="float-word extra-word" style="--x: 81%; --y: 54%; --dur: 3.9s; --delay: -.9s; --amp: 12px;">diverse</span>
+          <span class="float-word extra-word" style="--x: 14%; --y: 70%; --dur: 4.9s; --delay: -2s; --amp: 15px;">content</span>
+          <span class="float-word extra-word" style="--x: 40%; --y: 77%; --dur: 3.7s; --delay: -.5s; --amp: 11px;">rapid</span>
+          <span class="float-word extra-word" style="--x: 73%; --y: 71%; --dur: 5.4s; --delay: -1.8s; --amp: 19px;">arrangements</span>
+          <span class="float-word extra-word" style="--x: 85%; --y: 83%; --dur: 4.2s; --delay: -2.4s; --amp: 13px;">debate</span>
+          <span class="float-word extra-word" style="--x: 29%; --y: 88%; --dur: 5.6s; --delay: -3s; --amp: 16px;">incredible</span>
+          <span class="float-word extra-word" style="--x: 60%; --y: 90%; --dur: 3.5s; --delay: -1.7s; --amp: 10px;">inferior</span>
+        </div>
+
+        <div class="phrase-layer" aria-hidden="true">
+          <div class="phrase-lines">
+            <div class="phrase-pair">
+              <div class="phrase-line">a new <span class="phrase-key">approach</span> to remembering words</div>
+              <div class="phrase-cn">一种记忆单词的新<span class="phrase-cn-key">方法</span></div>
+            </div>
+            <div class="phrase-pair">
+              <div class="phrase-line"><span class="phrase-key">explore</span> new things</div>
+              <div class="phrase-cn"><span class="phrase-cn-key">探索</span>新事物</div>
+            </div>
+            <div class="phrase-pair">
+              <div class="phrase-line"><span class="phrase-key">slip</span> on the ice</div>
+              <div class="phrase-cn">在冰上<span class="phrase-cn-key">滑倒</span></div>
+            </div>
+            <div class="phrase-pair">
+              <div class="phrase-line">ask an <span class="phrase-key">awkward</span> question</div>
+              <div class="phrase-cn">问一个<span class="phrase-cn-key">尴尬的</span>问题</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="phrase-layer-next" aria-hidden="true">
+          <div class="next-lines">
+            <div class="phrase-pair">
+              <div>get better <span class="phrase-key">gradually</span></div>
+              <div class="next-cn"><span class="phrase-cn-key">逐渐</span>好转</div>
+            </div>
+            <div class="phrase-pair">
+              <div>see the <span class="phrase-key">sorrow</span> in his eyes</div>
+              <div class="next-cn">看到他眼中的<span class="phrase-cn-key">悲伤</span></div>
+            </div>
+            <div class="phrase-pair">
+              <div>a culturally <span class="phrase-key">diverse</span> society</div>
+              <div class="next-cn"><span class="phrase-cn-key">多元</span>文化的社会</div>
+            </div>
+            <div class="phrase-pair">
+              <div><span class="phrase-key">mollify</span> the unhappy customer</div>
+              <div class="next-cn"><span class="phrase-cn-key">安抚</span>不满意的顾客</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 04: AI科技人像页｜蓝色粒子背景融合 -->
+    <section id="page-04" class="ai-page" data-page="04" data-page-title="AI辅助学习科技页">
+      <div class="ai-visual" aria-hidden="true">
+        <img src="assets/page-04/ai-head.png" alt="">
+      </div>
+      <div class="ai-brain" aria-hidden="true">
+        <img src="assets/page-04/brain-transparent.png" alt="">
+      </div>
+      <div class="ai-network" aria-hidden="true">
+        <svg class="ai-links" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="aiLinkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#50c6ff" stop-opacity=".98" />
+              <stop offset="58%" stop-color="#5ecfff" stop-opacity=".95" />
+              <stop offset="100%" stop-color="#fc9eff" stop-opacity=".98" />
+            </linearGradient>
+            <linearGradient id="aiGlowGradient" x1="0%" y1="80%" x2="100%" y2="24%">
+              <stop offset="0%" stop-color="rgba(80, 180, 255, 1)" />
+              <stop offset="50%" stop-color="rgba(180, 130, 255, 1)" />
+              <stop offset="100%" stop-color="rgba(255, 90, 210, 1)" />
+            </linearGradient>
+            <linearGradient id="aiBeamCore" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgb(110, 195, 255)" />
+              <stop offset="50%" stop-color="rgb(200, 155, 255)" />
+              <stop offset="100%" stop-color="rgb(255, 105, 220)" />
+            </linearGradient>
+            <filter id="aiStrokeHalo" x="-30%" y="-70%" width="160%" height="240%">
+              <feGaussianBlur stdDeviation="7" in="SourceGraphic" result="haloBlur" />
+              <feColorMatrix
+                in="haloBlur"
+                type="matrix"
+                values="0 0 0 0 0.26  0 0 0 0 0.58  0 0 0 0 1  0 0 0 .72 0"
+                result="blueHalo"
+              />
+              <feGaussianBlur stdDeviation="2" in="SourceGraphic" result="tightGlow" />
+              <feMerge>
+                <feMergeNode in="blueHalo" />
+                <feMergeNode in="tightGlow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="aiLineGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation=".9" result="softGlow" />
+              <feColorMatrix
+                in="softGlow"
+                type="matrix"
+                values="0 0 0 0 0.18  0 0 0 0 0.72  0 0 0 0 1  0 0 0 1 0"
+                result="blueGlow"
+              />
+              <feMerge>
+                <feMergeNode in="blueGlow" />
+                <feMergeNode in="blueGlow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+          <path class="ai-beam-glow beam-tl" pathLength="1" d="M50 50 C42 40 33 35 21.85 32.25" />
+          <path class="ai-beam-core beam-tl" pathLength="1" d="M50 50 C42 40 33 35 21.85 32.25" />
+          <path id="aiTravelPathTl" class="ai-link ai-link-tl" pathLength="1" d="M50 50 C42 40 33 35 21.85 32.25" />
+          <path class="ai-beam-glow beam-tr" pathLength="1" d="M50 50 C58 39 66 36 74.6 33.25" />
+          <path class="ai-beam-core beam-tr" pathLength="1" d="M50 50 C58 39 66 36 74.6 33.25" />
+          <path id="aiTravelPathTr" class="ai-link ai-link-tr" pathLength="1" d="M50 50 C58 39 66 36 74.6 33.25" />
+          <path class="ai-beam-glow beam-bl" pathLength="1" d="M50 50 C42 57 33 62 21.85 65.75" />
+          <path class="ai-beam-core beam-bl" pathLength="1" d="M50 50 C42 57 33 62 21.85 65.75" />
+          <path id="aiTravelPathBl" class="ai-link ai-link-bl" pathLength="1" d="M50 50 C42 57 33 62 21.85 65.75" />
+          <path class="ai-beam-glow beam-br" pathLength="1" d="M50 50 C58 62 66 68 74.6 72.2" />
+          <path class="ai-beam-core beam-br" pathLength="1" d="M50 50 C58 62 66 68 74.6 72.2" />
+          <path id="aiTravelPathBr" class="ai-link ai-link-br" pathLength="1" d="M50 50 C58 62 66 68 74.6 72.2" />
+        </svg>
+        <span class="ai-link-dot dot-tl"></span>
+        <span class="ai-link-dot dot-tr"></span>
+        <span class="ai-link-dot dot-bl"></span>
+        <span class="ai-link-dot dot-br"></span>
+        <article class="benefit benefit-tl">
+          <div class="benefit-head">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="5" width="16" height="14" rx="2" />
+                <path d="M7 15l3.3-3.3 2.7 2.7 2.2-2.2L19 16" />
+                <circle cx="16.5" cy="8.5" r="1.2" />
+              </svg>
+            </div>
+            <div>
+              <h3>有画面</h3>
+              <p>图像化信息<br>更容易记住</p>
+            </div>
+          </div>
+          <div class="benefit-visual visual-scene"></div>
+        </article>
+
+        <article class="benefit benefit-tr">
+          <div class="benefit-head">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24">
+                <rect x="9" y="3" width="6" height="5" rx="1" />
+                <rect x="4" y="16" width="6" height="5" rx="1" />
+                <rect x="14" y="16" width="6" height="5" rx="1" />
+                <path d="M12 8v4M7 16v-3h10v3" />
+              </svg>
+            </div>
+            <div>
+              <h3>有逻辑</h3>
+              <p>结构化理解<br>更清晰牢固</p>
+            </div>
+          </div>
+          <div class="benefit-visual visual-logic">
+            <div class="logic-stack">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <defs>
+                  <marker id="logicArrowHead" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="rgba(103, 211, 255, .82)" />
+                  </marker>
+                </defs>
+                <path class="logic-arrow" marker-end="url(#logicArrowHead)" d="M32 25 L32 38" />
+                <path class="logic-arrow" marker-end="url(#logicArrowHead)" d="M32 60 L32 73" />
+                <path class="logic-dash" marker-end="url(#logicArrowHead)" d="M54 16 C72 16 78 18 78 34 L78 45" />
+                <path class="logic-dash" marker-end="url(#logicArrowHead)" d="M78 64 C78 82 67 83 54 83" />
+              </svg>
+              <span class="logic-situation">Situation<br>情境</span>
+              <span class="logic-action">Action<br>行动</span>
+              <span class="logic-result">Result<br>结果</span>
+              <span class="logic-reason">Reason<br>原因</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="benefit benefit-bl">
+          <div class="benefit-visual visual-place"></div>
+          <div class="benefit-head">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21s6-5.1 6-11a6 6 0 0 0-12 0c0 5.9 6 11 6 11Z" />
+                <circle cx="12" cy="10" r="2.2" />
+              </svg>
+            </div>
+            <div>
+              <h3>有场景</h3>
+              <p>情境化学习<br>更真实具体</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="benefit benefit-br">
+          <div class="benefit-visual visual-use">
+            <div class="chat-stack">
+              <span>It was nice meeting you.</span>
+              <span>I hope we can work together.</span>
+            </div>
+          </div>
+          <div class="benefit-head">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M13 2L5 13h6l-1 9 9-13h-6l1-7Z" />
+              </svg>
+            </div>
+            <div>
+              <h3>能使用</h3>
+              <p>输出式应用<br>更容易调用</p>
+            </div>
+          </div>
+        </article>
+      </div>
+      <div class="ai-content">
+        <p class="ai-kicker">长期记忆</p>
+        <h2 class="ai-title">大脑更容易记住<br>有画面的语言</h2>
+        <p class="ai-copy">有画面、有逻辑、有场景，才更容易被调用</p>
+      </div>
+    </section>
+
+    <!-- PAGE 05: 产品形态页｜图书 x 软件 -->
+    <section id="page-05" class="product-page" data-page="05" data-page-title="产品形态页">
+      <div class="product-copy">
+        <h2 class="product-title">图书×软件</h2>
+        <p class="product-kicker">产品形态</p>
+      </div>
+      <div class="product-book-stage" aria-label="小词块微语境速记系列图书">
+        <img class="product-book book-purple" src="assets/page-05/book-purple.png" alt="">
+        <img class="product-book book-highschool" src="assets/page-05/book-highschool.png" alt="">
+        <img class="product-book book-blue" src="assets/page-05/book-blue.png" alt="">
+        <img class="product-book book-middle" src="assets/page-05/book-middle.png" alt="">
+        <img class="product-book book-red" src="assets/page-05/book-red.png" alt="">
+        <img class="product-cursor" src="assets/page-05/cursor.png" alt="">
+        <img class="product-front-book" src="assets/page-05/book-cover-front.png" alt="">
+        <div class="product-open-book" aria-hidden="true">
+          <div class="product-page-spread">
+            <div class="product-page-img product-page-left">
+              <img src="assets/page-05/page-left.png" alt="">
+            </div>
+            <div class="product-fold"></div>
+            <div class="product-page-img product-page-right">
+              <img src="assets/page-05/page-right.png" alt="">
+            </div>
+          </div>
+          <div class="book-magnifier" aria-hidden="true">
+            <div class="book-magnifier-content">
+              <div class="book-magnifier-page book-magnifier-left">
+                <img src="assets/page-05/page-left.png" alt="">
+              </div>
+              <div class="book-magnifier-fold"></div>
+              <div class="book-magnifier-page book-magnifier-right">
+                <img src="assets/page-05/page-right.png" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="book-magnifier-handle" aria-hidden="true"></div>
+        </div>
+      </div>
+      <img class="product-devices" src="assets/page-05/devices.png" alt="小词块多端学习产品界面">
+      <div class="device-click-target" aria-hidden="true"></div>
+      <img class="device-cursor" src="assets/page-05/cursor.png" alt="">
+      <img class="device-focus" src="assets/page-05/device-focus.png" alt="小词块一体机学习界面">
+      <div class="device-mode-hitbox" aria-label="切换学习模式">
+        <button class="device-mode-button" type="button" data-mode="guess" aria-label="切换到猜"></button>
+        <button class="device-mode-button" type="button" data-mode="select" aria-label="切换到选"></button>
+        <button class="device-mode-button" type="button" data-mode="order" aria-label="切换到序"></button>
+        <button class="device-mode-button" type="button" data-mode="speak" aria-label="切换到说"></button>
+        <button class="device-mode-button" type="button" data-mode="write" aria-label="切换到写"></button>
+      </div>
+      <img class="device-card-cursor" src="assets/page-05/cursor.png" alt="">
+      <img class="device-detail" src="assets/page-05/device-detail.png" alt="小词块单词学习界面">
+    </section>
+
+    <!-- PAGE 06: 五步学习法 -->
+    <section id="page-06" class="method-page" data-page="06" data-page-title="五步学习法">
+      <div class="page-title-block">
+        <h2 class="page-title">五步学习法</h2>
+        <p class="page-subtitle">从认识到真正会用</p>
+      </div>
+
+      <div class="method-board">
+        <nav class="method-steps" aria-label="五步学习法步骤">
+          <button class="method-step is-selected" type="button" data-method-step="guess">
+            <span class="method-step-number">01</span>
+            <span class="method-step-label">猜</span>
+            <img class="method-step-icon" src="assets/page-06/bulb.svg" alt="">
+          </button>
+          <button class="method-step" type="button" data-method-step="select">
+            <span class="method-step-number">02</span>
+            <span class="method-step-label">选</span>
+            <img class="method-step-icon" src="assets/page-06/target.svg" alt="">
+          </button>
+          <button class="method-step" type="button" data-method-step="order">
+            <span class="method-step-number">03</span>
+            <span class="method-step-label">序</span>
+            <img class="method-step-icon" src="assets/page-06/puzzle.svg" alt="">
+          </button>
+          <button class="method-step" type="button" data-method-step="speak">
+            <span class="method-step-number">04</span>
+            <span class="method-step-label">说</span>
+            <img class="method-step-icon" src="assets/page-06/chat.svg" alt="">
+          </button>
+          <button class="method-step" type="button" data-method-step="write">
+            <span class="method-step-number">05</span>
+            <span class="method-step-label">写</span>
+            <img class="method-step-icon method-step-icon-write" src="assets/page-06/layers.svg" alt="">
+          </button>
+        </nav>
+
+        <article class="method-card" aria-live="polite">
+          <p class="method-progress"><span class="method-index">1</span>/5</p>
+          <div class="method-question">
+            <p class="method-english">an English <span class="method-highlight">textbook</span></p>
+            <p class="method-phonetic">/ˈtekstbʊk/ <span class="method-part">n</span></p>
+            <p class="method-prompt">通过熟词猜生词</p>
+            <p class="method-translation" hidden>一本英语<span class="method-highlight">教科书</span></p>
+            <div class="method-order-answer" hidden></div>
+            <button class="method-speak-button" type="button" aria-label="模拟语音输入" hidden>
+              <img src="assets/page-06/mic.svg" alt="">
+            </button>
+            <div class="method-write-answer" hidden></div>
+            <div class="method-options">
+              <button class="method-option" type="button" data-answer="教科书">教科书</button>
+              <button class="method-option" type="button" data-answer="文章">文章</button>
+              <button class="method-option" type="button" data-answer="练习">练习</button>
+            </div>
+          </div>
+          <button class="method-prev" type="button" aria-label="上一题" hidden>上一题</button>
+          <button class="method-next" type="button" aria-label="下一题">下一题</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const introVideo = document.getElementById("introVideo");
+    const cleanBg = document.querySelector(".clean-bg");
+    const videoDim = document.querySelector(".video-dim");
+    const finalLogo = document.querySelector(".final-logo");
+    const pageSections = [...document.querySelectorAll("[data-page]")];
+    const currentPageStorageKey = "xiaocikuai-current-page";
+    const currentScrollStorageKey = "xiaocikuai-current-scroll-y";
+    let initialPageRestored = false;
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    const microPage = document.getElementById("page-03");
+    const aiPage = document.getElementById("page-04");
+    const productPage = document.getElementById("page-05");
+    const methodPage = document.getElementById("page-06");
+    const productDevices = productPage?.querySelector(".product-devices");
+    const productOpenBook = productPage?.querySelector(".product-open-book");
+    const bookMagnifier = productPage?.querySelector(".book-magnifier");
+    const bookMagnifierHandle = productPage?.querySelector(".book-magnifier-handle");
+    const bookMagnifierContent = productPage?.querySelector(".book-magnifier-content");
+    const deviceCursor = productPage?.querySelector(".device-cursor");
+    const deviceFocus = productPage?.querySelector(".device-focus");
+    const deviceClickTarget = productPage?.querySelector(".device-click-target");
+    const deviceModeButtons = [...(productPage?.querySelectorAll(".device-mode-button") || [])];
+    const methodSteps = [...(methodPage?.querySelectorAll(".method-step") || [])];
+    const methodIndex = methodPage?.querySelector(".method-index");
+    const methodEnglish = methodPage?.querySelector(".method-english");
+    const methodPhonetic = methodPage?.querySelector(".method-phonetic");
+    const methodPrompt = methodPage?.querySelector(".method-prompt");
+    const methodTranslation = methodPage?.querySelector(".method-translation");
+    const methodOrderAnswer = methodPage?.querySelector(".method-order-answer");
+    const methodSpeakButton = methodPage?.querySelector(".method-speak-button");
+    const methodWriteAnswer = methodPage?.querySelector(".method-write-answer");
+    let methodOptions = [...(methodPage?.querySelectorAll(".method-option") || [])];
+    const methodPrev = methodPage?.querySelector(".method-prev");
+    const methodNext = methodPage?.querySelector(".method-next");
+    const aiNetwork = aiPage?.querySelector(".ai-network");
+    const aiBrain = aiPage?.querySelector(".ai-brain");
+    const aiLinkTargets = {
+      tl: aiPage?.querySelector(".benefit-tl .benefit-visual"),
+      tr: aiPage?.querySelector(".benefit-tr .benefit-visual"),
+      bl: aiPage?.querySelector(".benefit-bl .benefit-visual"),
+      br: aiPage?.querySelector(".benefit-br .benefit-visual")
+    };
+    const aiDots = {
+      tl: aiPage?.querySelector(".dot-tl"),
+      tr: aiPage?.querySelector(".dot-tr"),
+      bl: aiPage?.querySelector(".dot-bl"),
+      br: aiPage?.querySelector(".dot-br")
+    };
+    let microStage = 0;
+    let microTargetReady = false;
+    let microTargetTimer = null;
+    let microMoveReady = false;
+    let microMoveTimer = null;
+    let microPhraseHiding = false;
+    let microPhraseTimer = null;
+    let microPhraseExiting = false;
+    let microPhraseNextActive = false;
+    let microPhraseNextTimer = null;
+    let microStageLockedUntil = 0;
+    let microLockScrollY = 0;
+    let aiBrainStage = 0;
+    let aiBrainCentered = false;
+    let aiBrainTimer = null;
+    let aiLineStage = 0;
+    let aiBenefitStage = 0;
+    let aiBenefitTimers = [];
+    let aiBrainLockedUntil = 0;
+    let aiLockScrollY = 0;
+    let productDevicesActive = false;
+    let productNavigatingToMethod = false;
+    let productNavigateTimer = null;
+    let productActivatedAt = 0;
+    let productLockScrollY = 0;
+    let productDevicesLockUntil = 0;
+    let activePageId = "";
+    let activePageEnteredAt = 0;
+    let activePageHadDownInteraction = false;
+    let replayingPageUntil = 0;
+    const microStageLocks = {
+      1: 0,
+      2: 6100
+    };
+    const aiBrainLockDuration = 15000;
+    const deviceClickPoint = {
+      x: .43,
+      y: .30
+    };
+    const cursorHotspot = {
+      x: .30,
+      y: .16
+    };
+    const bookMagnifierZoom = 2;
+    const deviceModeImages = {
+      guess: "assets/page-05/mode-guess.png",
+      select: "assets/page-05/mode-select.png",
+      order: "assets/page-05/mode-order.png",
+      speak: "assets/page-05/mode-speak.png",
+      write: "assets/page-05/mode-write.png"
+    };
+    const methodQuestionSets = {
+      guess: [
+      {
+        phrase: 'an English <span class="method-highlight">textbook</span>',
+        phonetic: '/ˈtekstbʊk/ <span class="method-part">n</span>',
+        prompt: "通过熟词猜生词",
+        translation: '一本英语<span class="method-highlight">教科书</span>',
+        options: ["教科书", "文章", "练习"],
+        answer: "教科书"
+      },
+      {
+        phrase: 'a <span class="method-highlight">conversation</span> between two doctors',
+        phonetic: '/ˌkɒnvəˈseɪʃn/ <span class="method-part">n</span>',
+        prompt: "通过熟词猜生词",
+        translation: '两个医生之间的一段<span class="method-highlight">对话</span>',
+        options: ["会议", "讨论", "对话"],
+        answer: "对话"
+      },
+      {
+        phrase: 'he said <span class="method-highlight">aloud</span>',
+        phonetic: '/əˈlaʊd/ <span class="method-part">adv</span>',
+        prompt: "通过熟词猜生词",
+        translation: '他<span class="method-highlight">大声地</span>说',
+        options: ["大声地", "礼貌地", "平静地"],
+        answer: "大声地"
+      },
+      {
+        phrase: 'the <span class="method-highlight">pronunciation</span> of this word',
+        phonetic: '/prəˌnʌnsiˈeɪʃən/ <span class="method-part">n</span>',
+        prompt: "通过熟词猜生词",
+        translation: '这个单词的<span class="method-highlight">发音</span>',
+        options: ["来源", "碗", "发音"],
+        answer: "发音"
+      },
+      {
+        phrase: 'words, phrases and <span class="method-highlight">sentences</span>',
+        phonetic: '/ˈsentəns/ <span class="method-part">n</span>',
+        prompt: "通过熟词猜生词",
+        translation: '单词、短语和<span class="method-highlight">句子</span>',
+        options: ["原因", "噪音", "句子"],
+        answer: "句子"
+      }
+      ],
+      select: [
+      {
+        phrase: 'the <span class="method-blank"></span> of this word',
+        phonetic: "",
+        prompt: "",
+        translation: '这个单词的<span class="method-highlight">发音</span>',
+        options: ["source", "bowl", "pronunciation"],
+        answer: "pronunciation"
+      },
+      {
+        phrase: 'an English <span class="method-blank"></span>',
+        phonetic: "",
+        prompt: "",
+        translation: '一本英语<span class="method-highlight">教科书</span>',
+        options: ["textbook", "exercise", "essay"],
+        answer: "textbook"
+      },
+      {
+        phrase: 'a <span class="method-blank"></span> between two doctors',
+        phonetic: "",
+        prompt: "",
+        translation: '两个医生之间的<span class="method-highlight">对话</span>',
+        options: ["conversation", "meeting", "debate"],
+        answer: "conversation"
+      },
+      {
+        phrase: 'he said <span class="method-blank"></span>',
+        phonetic: "",
+        prompt: "",
+        translation: '他<span class="method-highlight">大声地</span>说',
+        options: ["aloud", "calmly", "politely"],
+        answer: "aloud"
+      },
+      {
+        phrase: 'words, phrases and <span class="method-blank"></span>s',
+        phonetic: "",
+        prompt: "",
+        translation: '单词、短语和<span class="method-highlight">句子</span>',
+        options: ["sentence", "nut", "calculation"],
+        answer: "sentence"
+      }
+      ],
+      order: [
+      {
+        translation: '一本英语<span class="method-highlight">教科书</span>',
+        prompt: "点击单词排序",
+        words: ["textbook", "an", "English"],
+        answer: ["an", "English", "textbook"],
+        highlight: "textbook"
+      },
+      {
+        translation: '两个医生之间的<span class="method-highlight">对话</span>',
+        prompt: "点击单词排序",
+        words: ["doctors", "a", "conversation", "between", "two"],
+        answer: ["a", "conversation", "between", "two", "doctors"],
+        highlight: "conversation"
+      },
+      {
+        translation: '他<span class="method-highlight">大声地</span>说',
+        prompt: "点击单词排序",
+        words: ["said", "aloud", "he"],
+        answer: ["he", "said", "aloud"],
+        highlight: "aloud"
+      },
+      {
+        translation: '这个单词的<span class="method-highlight">发音</span>',
+        prompt: "点击单词排序",
+        words: ["of", "this", "word", "the", "pronunciation"],
+        answer: ["the", "pronunciation", "of", "this", "word"],
+        highlight: "pronunciation"
+      },
+      {
+        translation: '单词、短语和<span class="method-highlight">句子</span>',
+        prompt: "点击单词排序",
+        words: ["phrases", "and", "sentences", "words,"],
+        answer: ["words,", "phrases", "and", "sentences"],
+        highlight: "sentences"
+      }
+      ],
+      speak: [
+      {
+        phrase: 'an English <span class="method-blank"></span>',
+        translation: '一本英语<span class="method-highlight">教科书</span>',
+        answer: "textbook"
+      },
+      {
+        phrase: 'a <span class="method-blank"></span> between two doctors',
+        translation: '两个医生之间的<span class="method-highlight">对话</span>',
+        answer: "conversation"
+      },
+      {
+        phrase: 'he said <span class="method-blank"></span>',
+        translation: '他<span class="method-highlight">大声地</span>说',
+        answer: "aloud"
+      },
+      {
+        phrase: 'the <span class="method-blank"></span> of this word',
+        translation: '这个单词的<span class="method-highlight">发音</span>',
+        answer: "pronunciation"
+      },
+      {
+        phrase: 'words, phrases and <span class="method-blank"></span>s',
+        translation: '单词、短语和<span class="method-highlight">句子</span>',
+        answer: "sentence"
+      }
+      ],
+      write: [
+      {
+        before: "an English",
+        after: "",
+        translation: '一本英语<span class="method-highlight">教科书</span>',
+        answer: "textbook"
+      },
+      {
+        before: "a",
+        after: "between two doctors",
+        translation: '两个医生之间的<span class="method-highlight">对话</span>',
+        answer: "conversation"
+      },
+      {
+        before: "he said",
+        after: "",
+        translation: '他<span class="method-highlight">大声地</span>说',
+        answer: "aloud"
+      },
+      {
+        before: "the",
+        after: "of this word",
+        translation: '这个单词的<span class="method-highlight">发音</span>',
+        answer: "pronunciation"
+      },
+      {
+        before: "words, phrases and",
+        after: "s",
+        translation: '单词、短语和<span class="method-highlight">句子</span>',
+        answer: "sentence"
+      }
+      ]
+    };
+    let methodQuestionIndex = 0;
+    let methodStep = "guess";
+    let methodOrderSelection = [];
+    let methodSpeakTimer = null;
+
+    function ensureMethodOptionCount(count) {
+      const optionsWrap = methodPage?.querySelector(".method-options");
+      if (!optionsWrap) return;
+      while (methodOptions.length < count) {
+        const option = document.createElement("button");
+        option.className = "method-option";
+        option.type = "button";
+        option.addEventListener("click", () => chooseMethodAnswer(option));
+        optionsWrap.appendChild(option);
+        methodOptions.push(option);
+      }
+      methodOptions.forEach((option, index) => {
+        option.hidden = index >= count;
+      });
+    }
+
+    function formatMethodPhrase(words, highlight, markClass = "") {
+      return words.map(word => {
+        const classes = [];
+        if (word === highlight) classes.push("method-highlight");
+        if (markClass) classes.push(markClass);
+        return classes.length ? `<span class="${classes.join(" ")}">${word}</span>` : word;
+      }).join(" ");
+    }
+
+    function renderOrderSelection() {
+      if (!methodOrderAnswer) return;
+      const methodQuestions = methodQuestionSets[methodStep] || [];
+      const question = methodQuestions[methodQuestionIndex] || {};
+      methodOrderAnswer.hidden = methodOrderSelection.length === 0;
+      methodOrderAnswer.innerHTML = methodOrderSelection
+        .map(word => `<span class="method-order-chip${word === question.highlight ? " method-highlight" : ""}">${word}</span>`)
+        .join("");
+    }
+
+    function renderWritePhrase(question) {
+      const before = question.before ? `${question.before} ` : "";
+      const after = question.after ? ` ${question.after}` : "";
+      return `${before}<input class="method-write-input" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="输入单词">${after}`;
+    }
+
+    function setDeviceMode(mode) {
+      if (!deviceFocus || !deviceModeImages[mode]) return;
+      deviceFocus.src = deviceModeImages[mode];
+      deviceModeButtons.forEach(button => {
+        button.toggleAttribute("aria-current", button.dataset.mode === mode);
+      });
+    }
+
+    function renderMethodQuestion() {
+      const methodQuestions = methodQuestionSets[methodStep] || methodQuestionSets.guess;
+      const question = methodQuestions[methodQuestionIndex] || methodQuestions[0];
+      if (!question) return;
+
+      const methodCard = methodPage?.querySelector(".method-card");
+      const isSelect = methodStep === "select";
+      const isOrder = methodStep === "order";
+      const isSpeak = methodStep === "speak";
+      const isWrite = methodStep === "write";
+      methodPage?.classList.toggle("is-select-step", isSelect);
+      methodPage?.classList.toggle("is-order-step", isOrder);
+      methodPage?.classList.toggle("is-speak-step", isSpeak);
+      methodPage?.classList.toggle("is-write-step", isWrite);
+      methodCard?.classList.toggle("is-select-mode", isSelect);
+      methodCard?.classList.toggle("is-order-mode", isOrder);
+      methodCard?.classList.toggle("is-speak-mode", isSpeak);
+      methodCard?.classList.toggle("is-write-mode", isWrite);
+      methodCard?.classList.remove("is-answered", "is-order-correct", "is-order-wrong");
+      if (methodIndex) methodIndex.textContent = String(methodQuestionIndex + 1);
+
+      if (isOrder) {
+        methodOrderSelection = [];
+        if (methodSpeakButton) {
+          methodSpeakButton.hidden = true;
+          methodSpeakButton.disabled = false;
+          methodSpeakButton.classList.remove("is-listening");
+        }
+        if (methodWriteAnswer) {
+          methodWriteAnswer.hidden = true;
+          methodWriteAnswer.textContent = "";
+        }
+        ensureMethodOptionCount(question.words.length);
+        if (methodEnglish) {
+          methodEnglish.hidden = true;
+          methodEnglish.innerHTML = "";
+        }
+        if (methodPhonetic) {
+          methodPhonetic.hidden = true;
+          methodPhonetic.innerHTML = "";
+        }
+        if (methodPrompt) {
+          methodPrompt.hidden = false;
+          methodPrompt.textContent = question.prompt;
+        }
+        if (methodTranslation) {
+          methodTranslation.hidden = false;
+          methodTranslation.innerHTML = question.translation;
+        }
+        renderOrderSelection();
+        methodOptions.forEach((option, index) => {
+          const optionText = question.words[index] || "";
+          option.textContent = optionText;
+          option.dataset.answer = optionText;
+          option.dataset.orderIndex = String(index);
+          option.classList.remove("is-correct", "is-wrong", "is-used");
+          option.classList.toggle("is-english", /^[A-Za-z]/.test(optionText));
+          option.disabled = !optionText;
+        });
+        if (methodPrev) methodPrev.hidden = methodQuestionIndex === 0;
+        if (methodNext) methodNext.hidden = methodQuestionIndex === methodQuestions.length - 1;
+        return;
+      }
+
+      if (isSpeak) {
+        ensureMethodOptionCount(0);
+        if (methodEnglish) {
+          methodEnglish.hidden = false;
+          methodEnglish.innerHTML = question.phrase;
+        }
+        if (methodPhonetic) {
+          methodPhonetic.hidden = true;
+          methodPhonetic.innerHTML = "";
+        }
+        if (methodPrompt) {
+          methodPrompt.hidden = true;
+          methodPrompt.textContent = "";
+        }
+        if (methodTranslation) {
+          methodTranslation.hidden = false;
+          methodTranslation.innerHTML = question.translation;
+        }
+        if (methodOrderAnswer) {
+          methodOrderAnswer.hidden = true;
+          methodOrderAnswer.innerHTML = "";
+        }
+        if (methodWriteAnswer) {
+          methodWriteAnswer.hidden = true;
+          methodWriteAnswer.textContent = "";
+        }
+        if (methodSpeakButton) {
+          methodSpeakButton.hidden = false;
+          methodSpeakButton.disabled = false;
+          methodSpeakButton.classList.remove("is-listening");
+        }
+        methodOptions.forEach(option => {
+          option.classList.remove("is-correct", "is-wrong", "is-used");
+          option.disabled = true;
+        });
+        if (methodPrev) methodPrev.hidden = methodQuestionIndex === 0;
+        if (methodNext) methodNext.hidden = methodQuestionIndex === methodQuestions.length - 1;
+        return;
+      }
+
+      if (isWrite) {
+        ensureMethodOptionCount(0);
+        if (methodEnglish) {
+          methodEnglish.hidden = false;
+          methodEnglish.innerHTML = renderWritePhrase(question);
+        }
+        if (methodPhonetic) {
+          methodPhonetic.hidden = true;
+          methodPhonetic.innerHTML = "";
+        }
+        if (methodPrompt) {
+          methodPrompt.hidden = true;
+          methodPrompt.textContent = "";
+        }
+        if (methodTranslation) {
+          methodTranslation.hidden = false;
+          methodTranslation.innerHTML = question.translation;
+        }
+        if (methodOrderAnswer) {
+          methodOrderAnswer.hidden = true;
+          methodOrderAnswer.innerHTML = "";
+        }
+        if (methodWriteAnswer) {
+          methodWriteAnswer.hidden = true;
+          methodWriteAnswer.textContent = "";
+        }
+        if (methodSpeakButton) {
+          methodSpeakButton.hidden = true;
+          methodSpeakButton.disabled = false;
+          methodSpeakButton.classList.remove("is-listening");
+        }
+        methodOptions.forEach(option => {
+          option.classList.remove("is-correct", "is-wrong", "is-used");
+          option.disabled = true;
+        });
+        if (methodPrev) methodPrev.hidden = methodQuestionIndex === 0;
+        if (methodNext) methodNext.hidden = methodQuestionIndex === methodQuestions.length - 1;
+        return;
+      }
+
+      if (methodSpeakButton) {
+        methodSpeakButton.hidden = true;
+        methodSpeakButton.disabled = false;
+        methodSpeakButton.classList.remove("is-listening");
+      }
+      if (methodWriteAnswer) {
+        methodWriteAnswer.hidden = true;
+        methodWriteAnswer.textContent = "";
+      }
+      ensureMethodOptionCount(question.options.length);
+      if (methodEnglish) {
+        methodEnglish.hidden = false;
+        methodEnglish.innerHTML = question.phrase;
+      }
+      if (methodPhonetic) {
+        methodPhonetic.hidden = false;
+        methodPhonetic.innerHTML = question.phonetic;
+      }
+      if (methodPrompt) {
+        methodPrompt.hidden = false;
+        methodPrompt.textContent = question.prompt;
+      }
+      if (methodTranslation) {
+        methodTranslation.hidden = !isSelect;
+        methodTranslation.innerHTML = question.translation;
+      }
+      if (methodOrderAnswer) {
+        methodOrderAnswer.hidden = true;
+        methodOrderAnswer.innerHTML = "";
+      }
+      methodOptions.forEach((option, index) => {
+        const optionText = question.options[index] || "";
+        option.textContent = optionText;
+        option.dataset.answer = optionText;
+        option.dataset.orderIndex = "";
+        option.classList.remove("is-correct", "is-wrong");
+        option.classList.remove("is-used");
+        option.classList.toggle("is-english", /^[A-Za-z]/.test(optionText));
+        option.disabled = !optionText;
+      });
+      if (methodPrev) methodPrev.hidden = methodQuestionIndex === 0;
+      if (methodNext) methodNext.hidden = methodQuestionIndex === methodQuestions.length - 1;
+    }
+
+    function setMethodStep(step) {
+      methodStep = methodQuestionSets[step] ? step : "guess";
+      methodQuestionIndex = 0;
+      methodOrderSelection = [];
+      methodSteps.forEach(button => {
+        button.classList.toggle("is-selected", button.dataset.methodStep === step);
+      });
+      renderMethodQuestion();
+    }
+
+    function chooseMethodAnswer(option) {
+      const methodQuestions = methodQuestionSets[methodStep] || methodQuestionSets.guess;
+      const question = methodQuestions[methodQuestionIndex] || methodQuestions[0];
+      if (!question || !option) return;
+      const selected = option.dataset.answer;
+
+      if (methodStep === "order") {
+        if (option.classList.contains("is-used")) return;
+        methodOrderSelection.push(selected);
+        option.classList.add("is-used");
+        option.disabled = true;
+        if (methodPrompt) methodPrompt.hidden = true;
+        renderOrderSelection();
+
+        if (methodOrderSelection.length < question.answer.length) return;
+
+        const isCorrect = methodOrderSelection.join(" ") === question.answer.join(" ");
+        const methodCard = methodPage?.querySelector(".method-card");
+        methodCard?.classList.add("is-answered");
+        methodCard?.classList.toggle("is-order-correct", isCorrect);
+        methodCard?.classList.toggle("is-order-wrong", !isCorrect);
+        if (methodPrompt) methodPrompt.hidden = true;
+        if (methodOrderAnswer) {
+          methodOrderAnswer.hidden = true;
+          methodOrderAnswer.innerHTML = "";
+        }
+        methodOptions.forEach(button => {
+          button.hidden = true;
+          button.disabled = true;
+        });
+        if (methodEnglish) {
+          methodEnglish.hidden = false;
+          const selectedPhrase = formatMethodPhrase(methodOrderSelection, question.highlight);
+          const correctPhrase = formatMethodPhrase(question.answer, question.highlight);
+          methodEnglish.innerHTML = isCorrect
+            ? `<span class="method-order-result"><span class="method-order-line">${correctPhrase}<img class="method-result-icon" src="assets/page-06/correct.svg" alt=""></span></span>`
+            : `<span class="method-order-result"><span class="method-order-line">${selectedPhrase}<img class="method-result-icon" src="assets/page-06/wrong.svg" alt=""></span><span class="method-order-divider"></span><span class="method-order-line">${correctPhrase}<img class="method-result-icon" src="assets/page-06/correct.svg" alt=""></span></span>`;
+        }
+        if (methodTranslation) methodTranslation.hidden = false;
+        return;
+      }
+
+      methodPage?.querySelector(".method-card")?.classList.add("is-answered");
+      if (methodStep === "select" && methodEnglish) {
+        methodEnglish.innerHTML = selected === question.answer
+          ? question.phrase.replace('<span class="method-blank"></span>', `<span class="method-filled-answer method-answer-correct">${selected}</span>`)
+          : question.phrase.replace('<span class="method-blank"></span>', `<span class="method-filled-answer method-answer-wrong">${selected}</span>`);
+      }
+      if (methodPrompt) methodPrompt.hidden = methodStep === "select" ? true : true;
+      if (methodTranslation) methodTranslation.hidden = false;
+
+      methodOptions.forEach(button => {
+        button.classList.remove("is-correct", "is-wrong");
+        if (button.dataset.answer === question.answer) {
+          button.classList.add("is-correct");
+        }
+      });
+
+      if (selected !== question.answer) {
+        option.classList.add("is-wrong");
+      }
+    }
+
+    function revealSpeakAnswer() {
+      const methodQuestions = methodQuestionSets.speak || [];
+      const question = methodQuestions[methodQuestionIndex] || methodQuestions[0];
+      if (!question || !methodSpeakButton || methodSpeakButton.disabled) return;
+
+      methodSpeakButton.disabled = true;
+      methodSpeakButton.classList.add("is-listening");
+
+      window.clearTimeout(methodSpeakTimer);
+      methodSpeakTimer = window.setTimeout(() => {
+        const methodCard = methodPage?.querySelector(".method-card");
+        methodCard?.classList.add("is-answered");
+        if (methodEnglish) {
+          methodEnglish.innerHTML = question.phrase.replace(
+            '<span class="method-blank"></span>',
+            `<span class="method-filled-answer method-answer-correct">${question.answer}</span>`
+          );
+        }
+        methodSpeakButton.hidden = false;
+        methodSpeakButton.disabled = false;
+        methodSpeakButton.classList.remove("is-listening");
+        methodSpeakTimer = null;
+      }, 460);
+    }
+
+    function normalizeMethodText(value) {
+      return value.trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function evaluateWriteAnswer(input, force = false) {
+      const methodQuestions = methodQuestionSets.write || [];
+      const question = methodQuestions[methodQuestionIndex] || methodQuestions[0];
+      if (!question || !input || input.disabled) return;
+
+      const typed = normalizeMethodText(input.value);
+      const answer = normalizeMethodText(question.answer);
+      if (!typed) return;
+      if (!force && typed !== answer) return;
+
+      const methodCard = methodPage?.querySelector(".method-card");
+      methodCard?.classList.add("is-answered");
+
+      if (typed === answer) {
+        if (methodEnglish) {
+          const before = question.before ? `${question.before} ` : "";
+          const after = question.after ? ` ${question.after}` : "";
+          methodEnglish.innerHTML = `${before}<span class="method-filled-answer method-answer-correct">${question.answer}</span>${after}`;
+        }
+        if (methodWriteAnswer) {
+          methodWriteAnswer.hidden = true;
+          methodWriteAnswer.textContent = "";
+        }
+        return;
+      }
+
+      input.classList.add("is-wrong");
+      input.disabled = true;
+      if (methodWriteAnswer) {
+        methodWriteAnswer.hidden = false;
+        methodWriteAnswer.textContent = question.answer;
+      }
+    }
+
+    function resetMethodInteraction() {
+      window.clearTimeout(methodSpeakTimer);
+      methodSpeakTimer = null;
+      if (methodSpeakButton) {
+        methodSpeakButton.hidden = true;
+        methodSpeakButton.disabled = false;
+        methodSpeakButton.classList.remove("is-listening");
+      }
+      methodQuestionIndex = 0;
+      methodStep = "guess";
+      setMethodStep("guess");
+      renderMethodQuestion();
+    }
+
+    function hideBookMagnifier() {
+      productOpenBook?.classList.remove("magnifier-active");
+    }
+
+    function updateBookMagnifier(event) {
+      if (!productOpenBook || !bookMagnifier || !bookMagnifierContent || productDevicesActive) {
+        hideBookMagnifier();
+        return;
+      }
+
+      const opacity = Number.parseFloat(getComputedStyle(productOpenBook).opacity || "0");
+      if (opacity < .72) {
+        hideBookMagnifier();
+        return;
+      }
+
+      const rect = productOpenBook.getBoundingClientRect();
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      ) {
+        hideBookMagnifier();
+        return;
+      }
+
+      const localX = ((event.clientX - rect.left) / rect.width) * productOpenBook.offsetWidth;
+      const localY = ((event.clientY - rect.top) / rect.height) * productOpenBook.offsetHeight;
+      const lensSize = bookMagnifier.offsetWidth;
+      const tx = lensSize / 2 - localX * bookMagnifierZoom;
+      const ty = lensSize / 2 - localY * bookMagnifierZoom;
+
+      bookMagnifier.style.left = `${localX.toFixed(2)}px`;
+      bookMagnifier.style.top = `${localY.toFixed(2)}px`;
+      if (bookMagnifierHandle) {
+        bookMagnifierHandle.style.left = `${localX.toFixed(2)}px`;
+        bookMagnifierHandle.style.top = `${localY.toFixed(2)}px`;
+      }
+      bookMagnifierContent.style.width = `${productOpenBook.offsetWidth}px`;
+      bookMagnifierContent.style.height = `${productOpenBook.offsetHeight}px`;
+      bookMagnifierContent.style.transform = `matrix(${bookMagnifierZoom}, 0, 0, ${bookMagnifierZoom}, ${tx.toFixed(2)}, ${ty.toFixed(2)})`;
+      productOpenBook.classList.add("magnifier-active");
+    }
+
+    function updateDeviceClickGeometry() {
+      if (!productPage || !productDevices || !deviceCursor) return;
+      const pageRect = productPage.getBoundingClientRect();
+      const devicesRect = productDevices.getBoundingClientRect();
+      const cursorRect = deviceCursor.getBoundingClientRect();
+      if (!devicesRect.width || !devicesRect.height || !cursorRect.width || !cursorRect.height) return;
+
+      const targetX = devicesRect.left + devicesRect.width * deviceClickPoint.x - pageRect.left;
+      const targetY = devicesRect.top + devicesRect.height * deviceClickPoint.y - pageRect.top;
+      const cursorX = targetX - cursorRect.width * cursorHotspot.x;
+      const cursorY = targetY - cursorRect.height * cursorHotspot.y;
+
+      productPage.style.setProperty("--device-click-x", `${targetX.toFixed(2)}px`);
+      productPage.style.setProperty("--device-click-y", `${targetY.toFixed(2)}px`);
+      productPage.style.setProperty("--device-click-left", `${cursorX.toFixed(2)}px`);
+      productPage.style.setProperty("--device-click-top", `${cursorY.toFixed(2)}px`);
+      if (deviceClickTarget) {
+        deviceClickTarget.style.left = `${targetX.toFixed(2)}px`;
+        deviceClickTarget.style.top = `${targetY.toFixed(2)}px`;
+      }
+    }
+
+    function updateAiLinkGeometry() {
+      if (!aiPage || !aiNetwork || !aiBrain) return;
+      const networkRect = aiNetwork.getBoundingClientRect();
+      const brainRect = aiBrain.getBoundingClientRect();
+      if (!networkRect.width || !networkRect.height || !brainRect.width || !brainRect.height) return;
+
+      const start = {
+        x: ((brainRect.left + brainRect.width / 2 - networkRect.left) / networkRect.width) * 100,
+        y: ((brainRect.top + brainRect.height / 2 - networkRect.top) / networkRect.height) * 100
+      };
+
+      Object.entries(aiLinkTargets).forEach(([key, target]) => {
+        const dot = aiDots[key];
+        if (!target || !dot) return;
+
+        const targetRect = target.getBoundingClientRect();
+        if (!targetRect.width || !targetRect.height) return;
+
+        const centerPx = {
+          x: targetRect.left + targetRect.width / 2,
+          y: targetRect.top + targetRect.height / 2
+        };
+        const brainCenterPx = {
+          x: brainRect.left + brainRect.width / 2,
+          y: brainRect.top + brainRect.height / 2
+        };
+        const vx = brainCenterPx.x - centerPx.x;
+        const vy = brainCenterPx.y - centerPx.y;
+        const length = Math.hypot(vx, vy) || 1;
+        const radius = Math.min(targetRect.width, targetRect.height) / 2;
+        const dotOffset = 7;
+        const endPx = {
+          x: centerPx.x + (vx / length) * (radius + dotOffset),
+          y: centerPx.y + (vy / length) * (radius + dotOffset)
+        };
+        const end = {
+          x: ((endPx.x - networkRect.left) / networkRect.width) * 100,
+          y: ((endPx.y - networkRect.top) / networkRect.height) * 100
+        };
+        const curveLift = key.includes("t") ? -4.5 : 4.5;
+        const c1 = {
+          x: start.x + (end.x - start.x) * .36,
+          y: start.y + (end.y - start.y) * .22 + curveLift
+        };
+        const c2 = {
+          x: start.x + (end.x - start.x) * .72,
+          y: start.y + (end.y - start.y) * .78 + curveLift
+        };
+        const d = `M${start.x.toFixed(2)} ${start.y.toFixed(2)} C${c1.x.toFixed(2)} ${c1.y.toFixed(2)} ${c2.x.toFixed(2)} ${c2.y.toFixed(2)} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+
+        aiPage.querySelectorAll(`.beam-${key}, .ai-link-${key}`).forEach(path => {
+          path.setAttribute("d", d);
+          const pathLength = path.getTotalLength();
+          path.style.setProperty("--path-length", `${pathLength}px`);
+        });
+        dot.style.left = `${end.x}%`;
+        dot.style.top = `${end.y}%`;
+      });
+    }
+
+    function resetMicroAnimation() {
+      microStage = 0;
+      microTargetReady = false;
+      microMoveReady = false;
+      microPhraseHiding = false;
+      microPhraseExiting = false;
+      microPhraseNextActive = false;
+      microStageLockedUntil = 0;
+      microLockScrollY = 0;
+      window.clearTimeout(microTargetTimer);
+      window.clearTimeout(microMoveTimer);
+      window.clearTimeout(microPhraseTimer);
+      window.clearTimeout(microPhraseNextTimer);
+    }
+
+    function resetAiBrainAnimation() {
+      aiBrainStage = 0;
+      aiBrainCentered = false;
+      aiLineStage = 0;
+      aiBenefitStage = 0;
+      aiBrainLockedUntil = 0;
+      aiLockScrollY = 0;
+      window.clearTimeout(aiBrainTimer);
+      aiBenefitTimers.forEach(timer => window.clearTimeout(timer));
+      aiBenefitTimers = [];
+    }
+
+    function resetProductAnimation() {
+      productDevicesActive = false;
+      productNavigatingToMethod = false;
+      window.clearTimeout(productNavigateTimer);
+      productNavigateTimer = null;
+      productActivatedAt = 0;
+      productLockScrollY = 0;
+      productDevicesLockUntil = 0;
+      hideBookMagnifier();
+      setDeviceMode("guess");
+    }
+
+    function goToMethodPageFromProduct() {
+      if (productNavigatingToMethod) return;
+      productNavigatingToMethod = true;
+      productDevicesActive = false;
+      productDevicesLockUntil = 0;
+      productLockScrollY = 0;
+      productPage.classList.remove("devices-active");
+      const methodTop = methodPage ? methodPage.offsetTop : productPage.offsetTop + window.innerHeight;
+      window.scrollTo({
+        top: methodTop,
+        behavior: "smooth"
+      });
+      window.clearTimeout(productNavigateTimer);
+      productNavigateTimer = window.setTimeout(() => {
+        if (methodPage && getCurrentPageSection() !== methodPage) {
+          window.scrollTo(0, methodTop);
+        }
+        updateCurrentPage();
+      }, 620);
+    }
+
+    function getCurrentPageSection() {
+      const viewportCenter = window.innerHeight / 2;
+      const current = pageSections.reduce((best, section) => {
+        const rect = section.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - viewportCenter);
+        return distance < best.distance ? { section, distance } : best;
+      }, { section: pageSections[0], distance: Infinity }).section;
+
+      if (current.dataset.page !== activePageId) {
+        activePageId = current.dataset.page;
+        activePageEnteredAt = Date.now();
+        activePageHadDownInteraction = false;
+      }
+
+      return current;
+    }
+
+    function pageHasPlayed(section) {
+      if (!section || Date.now() < replayingPageUntil) return false;
+      return section.dataset.page === activePageId && activePageHadDownInteraction;
+    }
+
+    function markPageDownInteraction(section) {
+      if (!section) return;
+      const current = getCurrentPageSection();
+      if (current !== section) return;
+      activePageHadDownInteraction = true;
+    }
+
+    function replayPage(section) {
+      if (!section) return;
+      if (section === microPage) resetMicroAnimation();
+      if (section === aiPage) resetAiBrainAnimation();
+      if (section === productPage) resetProductAnimation();
+
+      activePageId = section.dataset.page;
+      activePageEnteredAt = Date.now();
+      activePageHadDownInteraction = false;
+      replayingPageUntil = Date.now() + 700;
+
+      window.scrollTo(0, section.offsetTop);
+      section.classList.remove("is-active");
+      section.classList.remove("devices-active");
+      void section.offsetWidth;
+      updateCurrentPage();
+    }
+
+    function restoreSavedPage() {
+      if (initialPageRestored) return;
+      initialPageRestored = true;
+      let savedPageId = "";
+      let savedScrollY = Number.NaN;
+      try {
+        savedPageId = sessionStorage.getItem(currentPageStorageKey) || "";
+        savedScrollY = Number.parseFloat(sessionStorage.getItem(currentScrollStorageKey) || "");
+      } catch (error) {}
+      const target = pageSections.find(section => section.dataset.page === savedPageId);
+      const restoreY = Number.isFinite(savedScrollY) ? savedScrollY : target?.offsetTop;
+
+      if (Number.isFinite(restoreY)) {
+        window.scrollTo(0, restoreY);
+      }
+      if (target) {
+        activePageId = target.dataset.page;
+        activePageEnteredAt = Date.now();
+        activePageHadDownInteraction = false;
+      }
+      window.requestAnimationFrame(() => {
+        if (Number.isFinite(restoreY)) window.scrollTo(0, restoreY);
+        updateCurrentPage();
+        document.documentElement.classList.remove("is-restoring-page");
+      });
+    }
+
+    function showFinalLogo() {
+      introVideo.style.transition = "opacity 900ms ease";
+      cleanBg.style.transition = "opacity 900ms ease";
+      videoDim.style.transition = "opacity 900ms ease";
+      finalLogo.style.transition = "opacity 900ms ease 260ms, transform 1100ms cubic-bezier(.2, .8, .2, 1) 260ms";
+
+      introVideo.style.opacity = "0";
+      cleanBg.style.opacity = "1";
+      videoDim.style.opacity = ".28";
+      finalLogo.style.opacity = "1";
+      finalLogo.style.transform = "translate(-50%, -50%) scale(1)";
+    }
+
+    introVideo.addEventListener("loadedmetadata", () => {
+      introVideo.play().catch(() => {});
+    });
+
+    introVideo.addEventListener("canplay", () => {
+      introVideo.play().catch(() => {});
+    });
+
+    introVideo.addEventListener("ended", () => {
+      showFinalLogo();
+    });
+
+    function updateCurrentPage() {
+      const viewportCenter = window.innerHeight / 2;
+      const current = pageSections.reduce((best, section) => {
+        const rect = section.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - viewportCenter);
+        return distance < best.distance ? { section, distance } : best;
+      }, { section: pageSections[0], distance: Infinity }).section;
+      const previousPageId = activePageId;
+
+      if (current.dataset.page !== activePageId) {
+        activePageId = current.dataset.page;
+        activePageEnteredAt = Date.now();
+        activePageHadDownInteraction = false;
+      }
+
+      pageSections.forEach(section => {
+        section.classList.toggle("is-active", section === current);
+      });
+      document.documentElement.dataset.currentPage = current.dataset.page;
+      try {
+        sessionStorage.setItem(currentPageStorageKey, current.dataset.page);
+        sessionStorage.setItem(currentScrollStorageKey, String(window.scrollY));
+      } catch (error) {}
+
+      if (microPage && current !== microPage && window.scrollY < microPage.offsetTop) {
+        resetMicroAnimation();
+      }
+
+      if (aiPage && current !== aiPage && window.scrollY < aiPage.offsetTop) {
+        resetAiBrainAnimation();
+      }
+
+      if (productPage && current === productPage && !productActivatedAt) {
+        productActivatedAt = Date.now();
+        productLockScrollY = window.scrollY;
+      }
+
+      if (methodPage && current === methodPage && previousPageId && previousPageId !== current.dataset.page) {
+        productNavigatingToMethod = false;
+        resetMethodInteraction();
+      }
+
+      if (microPage) {
+        microPage.classList.toggle("words-active", microStage >= 1);
+        microPage.classList.toggle("green-words", microStage >= 2);
+        microPage.classList.toggle("target-words", microStage >= 2 && microTargetReady);
+        microPage.classList.toggle("center-words", microStage >= 2 && microMoveReady);
+        microPage.classList.toggle("phrase-hiding", microPhraseHiding);
+        microPage.classList.toggle("phrase-active", microStage >= 3);
+        microPage.classList.toggle("phrase-next-active", microPhraseExiting || microPhraseNextActive);
+        microPage.classList.toggle("phrase-next-visible", microPhraseNextActive);
+      }
+
+      if (aiPage) {
+        updateAiLinkGeometry();
+        aiPage.classList.toggle("brain-active", aiBrainStage >= 1);
+        aiPage.classList.toggle("brain-centered", aiBrainCentered);
+        [1, 2, 3, 4].forEach(stage => {
+          aiPage.classList.toggle(`line-stage-${stage}`, aiLineStage >= stage);
+        });
+        [1, 2, 3, 4, 5].forEach(stage => {
+          aiPage.classList.toggle(`benefit-stage-${stage}`, aiBenefitStage >= stage);
+        });
+      }
+
+      if (productPage) {
+        updateDeviceClickGeometry();
+        productPage.classList.toggle("devices-active", productDevicesActive);
+      }
+    }
+
+    window.addEventListener("wheel", event => {
+      if (event.deltaY >= 0) return;
+      const current = getCurrentPageSection();
+      if (!current || !pageHasPlayed(current)) return;
+      event.preventDefault();
+      replayPage(current);
+    }, { passive: false });
+
+    window.addEventListener("wheel", event => {
+      if (!microPage || event.deltaY <= 0) return;
+      const rect = microPage.getBoundingClientRect();
+      const isMicroVisible = rect.top < window.innerHeight * .55 && rect.bottom > window.innerHeight * .45;
+      if (!isMicroVisible || microStage >= 3) return;
+      event.preventDefault();
+      markPageDownInteraction(microPage);
+      if (Date.now() < microStageLockedUntil) return;
+      if (microStage === 0) microLockScrollY = window.scrollY;
+      microStage += 1;
+      microStageLockedUntil = Date.now() + (microStageLocks[microStage] || 900);
+      if (microStage === 2) {
+        microTargetReady = false;
+        microMoveReady = false;
+        microPhraseHiding = false;
+        microPhraseExiting = false;
+        microPhraseNextActive = false;
+        window.clearTimeout(microTargetTimer);
+        window.clearTimeout(microMoveTimer);
+        window.clearTimeout(microPhraseTimer);
+        window.clearTimeout(microPhraseNextTimer);
+        microTargetTimer = window.setTimeout(() => {
+          microTargetReady = true;
+          updateCurrentPage();
+          microMoveTimer = window.setTimeout(() => {
+            microMoveReady = true;
+            updateCurrentPage();
+            microPhraseTimer = window.setTimeout(() => {
+              microPhraseHiding = true;
+              updateCurrentPage();
+              microPhraseTimer = window.setTimeout(() => {
+                microStage = 3;
+                microPhraseHiding = false;
+                updateCurrentPage();
+                microPhraseNextTimer = window.setTimeout(() => {
+                  microPhraseExiting = true;
+                  updateCurrentPage();
+                  microPhraseNextTimer = window.setTimeout(() => {
+                    microPhraseNextActive = true;
+                    updateCurrentPage();
+                  }, 1700);
+                }, 5000);
+              }, 2000);
+            }, 2000);
+          }, 1000);
+        }, 1100);
+      }
+      updateCurrentPage();
+    }, { passive: false });
+
+    window.addEventListener("wheel", event => {
+      if (!aiPage || event.deltaY <= 0) return;
+      const rect = aiPage.getBoundingClientRect();
+      const isAiVisible = rect.top < window.innerHeight * .55 && rect.bottom > window.innerHeight * .45;
+      if (!isAiVisible) return;
+      if (aiBrainStage >= 1) {
+        if (Date.now() < aiBrainLockedUntil) {
+          event.preventDefault();
+        }
+        return;
+      }
+      event.preventDefault();
+      markPageDownInteraction(aiPage);
+      aiLockScrollY = window.scrollY;
+      aiBrainStage = 1;
+      aiBrainCentered = false;
+      aiLineStage = 0;
+      aiBenefitStage = 0;
+      aiBrainLockedUntil = Date.now() + aiBrainLockDuration;
+      window.clearTimeout(aiBrainTimer);
+      aiBenefitTimers.forEach(timer => window.clearTimeout(timer));
+      aiBenefitTimers = [];
+      aiBrainTimer = window.setTimeout(() => {
+        aiBrainCentered = true;
+        updateCurrentPage();
+        [
+          { line: 1, benefit: 1, lineDelay: 2400, benefitDelay: 3620 },
+          { line: 2, benefit: 2, lineDelay: 4960, benefitDelay: 6180 },
+          { line: 3, benefit: 3, lineDelay: 7320, benefitDelay: 8540 },
+          { line: 4, benefit: 4, lineDelay: 9680, benefitDelay: 10900 }
+        ].forEach(({ line, benefit, lineDelay, benefitDelay }) => {
+          aiBenefitTimers.push(window.setTimeout(() => {
+            aiLineStage = line;
+            updateCurrentPage();
+          }, lineDelay));
+          aiBenefitTimers.push(window.setTimeout(() => {
+            aiBenefitStage = benefit;
+            updateCurrentPage();
+          }, benefitDelay));
+        });
+      }, 3000);
+      updateCurrentPage();
+    }, { passive: false });
+
+    window.addEventListener("wheel", event => {
+      if (!productPage || event.deltaY <= 0) return;
+      const rect = productPage.getBoundingClientRect();
+      const isProductVisible = rect.top < window.innerHeight * .55 && rect.bottom > window.innerHeight * .45;
+      if (!isProductVisible) return;
+
+      if (productNavigatingToMethod) {
+        event.preventDefault();
+        return;
+      }
+
+      if (productDevicesActive) {
+        event.preventDefault();
+        if (Date.now() < productDevicesLockUntil) return;
+        goToMethodPageFromProduct();
+        return;
+      }
+
+      const bookAnimationReady = productActivatedAt && Date.now() - productActivatedAt > 15500;
+      if (!bookAnimationReady) {
+        event.preventDefault();
+        if (productActivatedAt) productLockScrollY = productLockScrollY || window.scrollY;
+        return;
+      }
+      event.preventDefault();
+      markPageDownInteraction(productPage);
+      productDevicesActive = true;
+      productLockScrollY = window.scrollY;
+      productDevicesLockUntil = Date.now() + 7600;
+      updateCurrentPage();
+    }, { passive: false });
+
+    window.addEventListener("scroll", () => {
+      if (aiBrainStage > 0 && Date.now() < aiBrainLockedUntil) {
+        if (Math.abs(window.scrollY - aiLockScrollY) < 2) return;
+        window.scrollTo(0, aiLockScrollY);
+        return;
+      }
+
+      if (productPage && productDevicesActive && Date.now() < productDevicesLockUntil) {
+        const rect = productPage.getBoundingClientRect();
+        const isProductVisible = rect.top < window.innerHeight * .55 && rect.bottom > window.innerHeight * .45;
+        if (isProductVisible && Math.abs(window.scrollY - productLockScrollY) >= 2) {
+          window.scrollTo(0, productLockScrollY);
+          return;
+        }
+      }
+
+      if (microStage === 0 || microPhraseNextActive) return;
+      if (Math.abs(window.scrollY - microLockScrollY) < 2) return;
+      window.scrollTo(0, microLockScrollY);
+    }, { passive: true });
+
+    window.addEventListener("scroll", updateCurrentPage, { passive: true });
+    window.addEventListener("beforeunload", () => {
+      try {
+        sessionStorage.setItem(currentPageStorageKey, activePageId || getCurrentPageSection()?.dataset.page || "");
+        sessionStorage.setItem(currentScrollStorageKey, String(window.scrollY));
+      } catch (error) {}
+    });
+    window.addEventListener("resize", () => {
+      updateCurrentPage();
+      updateAiLinkGeometry();
+      updateDeviceClickGeometry();
+      window.requestAnimationFrame(updateAiLinkGeometry);
+      window.requestAnimationFrame(updateDeviceClickGeometry);
+    });
+    productDevices?.addEventListener("load", updateDeviceClickGeometry);
+    productPage?.addEventListener("mousemove", updateBookMagnifier);
+    productPage?.addEventListener("mouseleave", hideBookMagnifier);
+    deviceModeButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        setDeviceMode(button.dataset.mode);
+      });
+    });
+    methodSteps.forEach(button => {
+      button.addEventListener("click", () => {
+        setMethodStep(button.dataset.methodStep);
+      });
+    });
+    methodOptions.forEach(option => {
+      option.addEventListener("click", () => chooseMethodAnswer(option));
+    });
+    methodSpeakButton?.addEventListener("click", revealSpeakAnswer);
+    methodPage?.addEventListener("click", event => {
+      if (methodStep !== "write" || event.target?.classList?.contains("method-write-input")) return;
+      const input = methodPage.querySelector(".method-write-input");
+      input?.focus();
+    });
+    methodPage?.addEventListener("input", event => {
+      if (!event.target?.classList?.contains("method-write-input")) return;
+      evaluateWriteAnswer(event.target);
+    });
+    methodPage?.addEventListener("keydown", event => {
+      if (!event.target?.classList?.contains("method-write-input") || event.key !== "Enter" || event.isComposing) return;
+      event.preventDefault();
+      evaluateWriteAnswer(event.target, true);
+    });
+    methodPage?.addEventListener("blur", event => {
+      if (!event.target?.classList?.contains("method-write-input")) return;
+      evaluateWriteAnswer(event.target, true);
+    }, true);
+    methodPrev?.addEventListener("click", () => {
+      if (methodQuestionIndex <= 0) return;
+      methodQuestionIndex -= 1;
+      renderMethodQuestion();
+    });
+    methodNext?.addEventListener("click", () => {
+      const methodQuestions = methodQuestionSets[methodStep] || methodQuestionSets.guess;
+      if (methodQuestionIndex >= methodQuestions.length - 1) return;
+      methodQuestionIndex += 1;
+      renderMethodQuestion();
+    });
+    window.addEventListener("load", () => {
+      restoreSavedPage();
+      updateAiLinkGeometry();
+      updateDeviceClickGeometry();
+      setDeviceMode("guess");
+      renderMethodQuestion();
+    });
+    restoreSavedPage();
+    if (!initialPageRestored) {
+      document.documentElement.classList.remove("is-restoring-page");
+    }
+    updateCurrentPage();
+    renderMethodQuestion();
+  </script>
+</body>
+</html>
